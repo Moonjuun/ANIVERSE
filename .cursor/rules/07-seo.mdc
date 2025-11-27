@@ -1,0 +1,26 @@
+---
+description: 검색엔진 최적화(SEO), JSON-LD, Open Graph 및 메타데이터 처리 규칙
+globs: src/app/**/layout.tsx, src/app/**/page.tsx, src/components/seo/**/*.tsx
+alwaysApply: true
+---
+
+아래의 조건 및 주의사항을 모두 적용하여 코드를 작성할 것.
+
+==============================================
+
+1. 메타데이터(Metadata) 조건
+
+   - **Dynamic Metadata:** 모든 페이지(`page.tsx`)는 `generateMetadata` 함수를 export 하여 동적으로 `<title>`과 `<description>`을 생성할 것.
+   - **Template:** `layout.tsx`의 `title.template` 기능을 활용하여 "아케인 | AniVerse" 형식을 유지할 것.
+   - **Keyword:** 메타 키워드에 해당 애니메이션의 '원제', '영어 제목', '장르'를 반드시 포함할 것.
+
+2. 구조화된 데이터 (JSON-LD) 조건
+
+   - **Review Schema:** 상세 페이지에는 반드시 Google이 인식할 수 있는 `Review` 타입의 JSON-LD 스크립트를 삽입할 것. (별점, 작성자, 대상 작품 포함)
+   - **Product Schema:** 굿즈/쇼핑 링크가 있는 섹션에는 `Product` 스키마를 적용하여 검색 결과에 '가격'과 '재고 상태'가 노출되도록 할 것.
+   - **Next.js Script:** `<script type="application/ld+json">` 대신 Next.js 방식의 삽입을 고려하거나 `next-seo` 등의 패턴을 따를 것.
+
+3. 소셜 공유 (Open Graph) 조건 - **OG Image Generation:** `@vercel/og` 라이브러리를 사용하여, 공유 시 해당 애니메이션의 포스터와 내 별점이 합성된 이미지를 동적으로 생성하는 API Route(`/api/og`)를 구현할 것.---
+   alwaysApply: true
+
+---

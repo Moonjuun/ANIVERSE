@@ -1,0 +1,37 @@
+---
+description: 권한(Role) 분기 처리, 로그인 상태 시뮬레이션 및 테스트 규칙
+globs: src/middleware.ts, src/app/**/*.tsx, tests/**/*.spec.ts, src/lib/auth/**/*.ts
+alwaysApply: true
+---
+
+아래의 조건 및 주의사항을 모두 적용하여 코드를 작성할 것.
+
+==============================================
+
+1. 권한(Role) 정의 조건
+
+   - **Guest (비로그인):** 모든 조회(Read) 가능, 쓰기(Write) 불가능.
+     - 쓰기 시도 시 `LoginModal`이 트리거되어야 함.
+   - **User (로그인):** 모든 조회 및 본인 데이터 쓰기 가능.
+   - **Admin (관리자):** (추후 확장) `/admin` 경로 접근 가능.
+
+2. 권한 구현 전략 (Next.js + Supabase)
+
+   - **Client-Side:** `window` 객체나 전역 변수에 의존하지 말고, Supabase의 `onAuthStateChange` 또는 Zustand의 Auth Store를 통해 상태를 판별할 것.
+   - **Server-Side:** 페이지 접근 제어는 `middleware.ts`에서 처리하고, 데이터 접근 제어는 RLS(Row Level Security)와 Server Actions 내부에서 `getUser()` 체크로 이중 검증할 것.
+   - **UI 분기:** `<AuthGuard fallback={<GuestView />}>` 형태의 HOC나 컴포넌트 래퍼를 사용하여, 로그인 여부에 따른 UI 변화를 선언적으로 처리할 것.
+
+3. 테스트(Test) 환경 권한 제어 조건 (Playwright)
+
+   - **Auth Bypass:** 테스트 코드 내에서 매번 UI 로그인을 수행하지 말 것.
+   - **Storage State:** Playwright의 `global-setup`을 활용하여, 테스트 시작 전 한 번만 로그인하고 세션 쿠키(Storage State)를 저장하여 재사용할 것.
+     - `test.use({ storageState: 'playwright/.auth/user.json' })`
+   - **Mocking:** 특정 테스트에서 '로그인한 척' 해야 하는 경우, Supabase Auth 쿠키를 Mocking하여 주입할 것.
+
+4. 시나리오별 테스트 작성 규칙
+
+   - **Case A (User):** 기본적으로 `storageState`를 주입하여 "이미 로그인된 상태"를 가정하고 기능(리뷰 작성, 찜하기)을 테스트할 것.
+   - **Case B (Guest):** `test.use({ storageState: { cookies: [], origins: [] } })`를 명시하여 "세션이 없는 상태"를 강제하고, 로그인 모달이 뜨는지 검증할 것.
+
+5. 개발(Dev) 환경 편의성 조건
+   - 개발 중 편의를 위해 `.env.local`에 `NEXT_PUBLIC_DEV_BYPASS_AUTH=true` 설정 시, 로그인 없이도 유저 권한으로 동작하도록 Mock Provider를 구성할 것을 권장한다. (단, 배포 환경에서는 절대 동작하지 않도록 할 것)

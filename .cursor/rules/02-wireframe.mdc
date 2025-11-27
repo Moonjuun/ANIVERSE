@@ -1,0 +1,48 @@
+---
+description: UI/UX 와이어프레임 및 레이아웃 구현 규칙 (Tailwind CSS 기반)
+globs: src/app/**/*.tsx, src/components/**/*.tsx, src/app/globals.css
+alwaysApply: true
+---
+
+아래의 조건 및 주의사항을 모두 적용하여 코드를 작성할 것.
+
+==============================================
+
+- [공통경로]
+  - [글로벌CSS]: src/app/globals.css
+  - [테일윈드설정]: tailwind.config.ts
+
+==============================================
+
+1. CSS 및 스타일링 조건 (Tailwind CSS 필수)
+
+   - **CSS Modules 사용 금지:** 별도의 `.css`나 `.module.css` 파일을 생성하지 말고, 오직 **Tailwind Utility Class**만 사용할 것.
+   - **디자인 시스템 준수:** 색상, 폰트 사이즈 등은 `tailwind.config.ts`에 정의된 테마 토큰(`bg-zinc-950`, `text-blue-500` 등)을 우선적으로 사용할 것.
+   - **하드코딩 지양:** `w-[350px]` 같은 임의 값보다는 `w-full`, `max-w-md`, `grid-cols-4` 등 반응형 유틸리티를 사용할 것.
+   - `!important` 사용 금지 (`!text-white` 등 사용 지양).
+
+2. 레이아웃 및 구조 조건
+
+   - **Flexbox & Grid 병행:**
+     - 1차원 레이아웃(정렬, 분배)은 `flex`를 사용한다.
+     - 2차원 레이아웃(벤토 그리드, 갤러리)은 반드시 `grid`를 사용한다. (예: `grid-cols-1 md:grid-cols-4`)
+   - **Positioning:**
+     - 전체 레이아웃 잡는 데 `absolute` 사용 금지.
+     - 단, 뱃지(Badge), 오버레이(Overlay), 아이콘 위치 조정 등 국소적인 UI 요소에는 `absolute` 허용 (반드시 부모에 `relative` 적용).
+   - **시맨틱 태그 사용:** `div` 남발을 피하고 `<header>`, `<main>`, `<section>`, `<footer>`, `<nav>` 등을 적절히 사용하여 구조를 잡을 것.
+
+3. globals.css 관리 조건
+
+   - `globals.css`는 Tailwind의 `@tailwind` 지시어와 전역 CSS 변수(Root Variables) 설정 용도로만 사용할 것.
+   - 개별 컴포넌트의 스타일을 `globals.css`에 작성하지 말 것.
+   - 변경 전, 이것이 정말 '전역'에 필요한 것인지 다시 한 번 확인할 것.
+
+4. 인터랙션 및 애니메이션 조건
+
+   - 와이어프레임 단계이므로 복잡한 키프레임(@keyframes) 애니메이션은 지양할 것.
+   - 단, 사용성을 위해 Tailwind의 기본 `transition`, `hover:`, `active:` 효과는 적극 사용할 것.
+   - 데이터 로딩 상태는 '스켈레톤 UI(Skeleton)'로 구현할 것.
+
+5. 반응형 조건 (Mobile First)
+   - 모바일 뷰를 기본으로 작성하고, `md:`, `lg:` 접두사를 사용하여 태블릿/데스크탑 스타일을 확장할 것.
+   - 예: `grid-cols-1 md:grid-cols-2 lg:grid-cols-4`

@@ -1,0 +1,43 @@
+---
+description: UI 컴포넌트 구현, 이미지/아이콘 처리, 피그마 반영 규칙
+globs: src/components/**/*.tsx, src/app/**/*.tsx
+alwaysApply: true
+---
+
+아래의 조건 및 주의사항을 모두 적용하여 코드를 작성할 것.
+
+==============================================
+
+- [자산경로]
+  - [아이콘]: 일반 UI 아이콘은 `lucide-react` 라이브러리 사용. (커스텀 아이콘만 public/icons/\*)
+  - [이미지]: public/images/* "로컬 정적 이미지"
+  - [폰트]: next/font/google "Inter, Pretendard"
+
+==============================================
+
+1. 피그마 및 디자인 구현 조건
+
+   - **Visual Fidelity:** 제공된 디자인(피그마/와이어프레임)의 색상, 간격, 폰트 사이즈를 Tailwind Class로 정확하게 구현할 것.
+   - **Structure:** 피그마의 'Layer' 구조를 맹목적으로 따르지 말 것.
+     - 피그마의 Group/Frame 중첩보다는 **시맨틱 태그**(`section`, `article`, `button` 등)와 **최적화된 HTML 구조**를 우선시할 것.
+     - 불필요한 `div` 래퍼(Wrapper) 생성을 지양할 것.
+   - **Scope:** 디자인에 없는 기능을 개발자가 임의로 상상하여 추가하지 말 것. 오직 정의된 UI 요소만 구현할 것.
+
+2. 이미지(Images) 처리 조건
+
+   - **Next.js Image:** 모든 이미지는 HTML `<img>` 태그 대신 Next.js의 `<Image />` 컴포넌트를 필수적으로 사용할 것.
+   - **외부 이미지:** TMDB, AniList 등의 외부 URL 이미지를 사용할 경우, `next.config.mjs`에 도메인을 등록하고 `width`, `height` (또는 `fill`) 속성을 반드시 지정할 것.
+   - **최적화:**
+     - LCP(Largest Contentful Paint) 요소(메인 히어로 배너 등)에는 `priority` 속성을 부여할 것.
+     - 레이아웃 이동(CLS) 방지를 위해 이미지 영역의 비율(Aspect Ratio)을 유지할 것 (`aspect-[2/3]` 등).
+
+3. 아이콘(Icons) 처리 조건
+
+   - **Lucide React:** 일반적인 UI 아이콘(검색, 메뉴, 유저, 화살표 등)은 `lucide-react` 컴포넌트를 우선 사용한다.
+     - 예: `<Search className="w-5 h-5 text-zinc-400" />`
+   - **Custom SVG:** 브랜드 로고 등 라이브러리에 없는 아이콘은 `public/icons`에 SVG로 저장하거나, React 컴포넌트화하여 사용한다.
+
+4. UI 컴포넌트 작성 조건 (Atomic)
+   - **Props Interface:** 모든 UI 컴포넌트는 Props 타입을 명확히 정의할 것. (`className` prop을 받아 스타일 오버라이딩을 허용할 것)
+   - **CN 유틸리티:** 조건부 클래스 결합 시 `clsx` 또는 `tailwind-merge` (설정된 유틸리티 함수 `cn()`)를 사용할 것.
+   - **접근성(a11y):** 버튼에는 `aria-label`, 이미지에는 `alt` 텍스트를 반드시 포함할 것.
