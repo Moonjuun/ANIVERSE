@@ -80,35 +80,38 @@ export function LoginModal() {
           {isSignUp ? '회원가입' : '로그인'}
         </h2>
 
+        {/* TODO: 구글 로그인 지원 (추후 구현) */}
+        {/* <Button
+          variant="secondary"
+          className="w-full mb-4"
+          onClick={() => {
+            // supabase.auth.signInWithOAuth({ provider: 'google' })
+          }}
+        >
+          Google로 로그인
+        </Button> */}
+
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label htmlFor="email" className="mb-2 block text-sm text-zinc-400">
-              이메일
-            </label>
             <input
-              id="email"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
+              placeholder="이메일"
               className="w-full rounded-lg bg-zinc-800 px-4 py-2 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="your@email.com"
             />
           </div>
 
           <div>
-            <label htmlFor="password" className="mb-2 block text-sm text-zinc-400">
-              비밀번호
-            </label>
             <input
-              id="password"
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
               minLength={6}
+              placeholder="비밀번호 (6자 이상)"
               className="w-full rounded-lg bg-zinc-800 px-4 py-2 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="••••••••"
             />
           </div>
 
@@ -131,9 +134,7 @@ export function LoginModal() {
             }}
             className="text-sm text-zinc-400 hover:text-blue-500"
           >
-            {isSignUp
-              ? '이미 계정이 있으신가요? 로그인'
-              : '계정이 없으신가요? 회원가입'}
+            {isSignUp ? '로그인' : '회원가입'}
           </button>
         </div>
       </div>
