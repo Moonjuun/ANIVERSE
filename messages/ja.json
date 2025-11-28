@@ -67,6 +67,26 @@
     "unexpected_error": "予期しないエラーが発生しました。",
     "no_favorites": "お気に入りリストが空です。",
     "title": "お気に入り"
+  },
+  "profile": {
+    "title": "プロフィール",
+    "edit_profile": "プロフィール編集",
+    "username": "ユーザー名",
+    "username_placeholder": "ユーザー名を入力",
+    "display_name": "表示名",
+    "display_name_placeholder": "表示名を入力",
+    "bio": "自己紹介",
+    "bio_placeholder": "自己紹介を入力",
+    "avatar_url": "アバターURL",
+    "avatar_url_placeholder": "画像URLを入力",
+    "update": "プロフィール更新",
+    "submitting": "更新中...",
+    "update_error": "プロフィールの更新に失敗しました。",
+    "unexpected_error": "予期しないエラーが発生しました。",
+    "my_reviews": "私のレビュー",
+    "my_favorites": "お気に入りのアニメ",
+    "no_reviews": "レビューをまだ書いていません。",
+    "no_favorites": "お気に入りのアニメがまだありません。"
   }
 }
 

@@ -67,6 +67,26 @@
     "unexpected_error": "An unexpected error occurred.",
     "no_favorites": "Your favorites list is empty.",
     "title": "My Favorites"
+  },
+  "profile": {
+    "title": "Profile",
+    "edit_profile": "Edit Profile",
+    "username": "Username",
+    "username_placeholder": "Enter username",
+    "display_name": "Display Name",
+    "display_name_placeholder": "Enter display name",
+    "bio": "Bio",
+    "bio_placeholder": "Enter your bio",
+    "avatar_url": "Avatar URL",
+    "avatar_url_placeholder": "Enter image URL",
+    "update": "Update Profile",
+    "submitting": "Updating...",
+    "update_error": "Failed to update profile.",
+    "unexpected_error": "An unexpected error occurred.",
+    "my_reviews": "My Reviews",
+    "my_favorites": "My Favorites",
+    "no_reviews": "You haven't written any reviews yet.",
+    "no_favorites": "You haven't favorited any anime yet."
   }
 }
 

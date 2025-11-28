@@ -67,6 +67,26 @@
     "unexpected_error": "예상치 못한 오류가 발생했습니다.",
     "no_favorites": "찜하기 목록이 비어있습니다.",
     "title": "찜하기 목록"
+  },
+  "profile": {
+    "title": "프로필",
+    "edit_profile": "프로필 수정",
+    "username": "사용자명",
+    "username_placeholder": "사용자명을 입력하세요",
+    "display_name": "표시 이름",
+    "display_name_placeholder": "표시할 이름을 입력하세요",
+    "bio": "소개",
+    "bio_placeholder": "자기소개를 입력하세요",
+    "avatar_url": "아바타 URL",
+    "avatar_url_placeholder": "이미지 URL을 입력하세요",
+    "update": "프로필 수정",
+    "submitting": "수정 중...",
+    "update_error": "프로필 수정에 실패했습니다.",
+    "unexpected_error": "예상치 못한 오류가 발생했습니다.",
+    "my_reviews": "내 리뷰",
+    "my_favorites": "찜한 애니메이션",
+    "no_reviews": "작성한 리뷰가 없습니다.",
+    "no_favorites": "찜한 애니메이션이 없습니다."
   }
 }
 
