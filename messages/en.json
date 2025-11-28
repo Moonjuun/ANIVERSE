@@ -18,6 +18,10 @@
     "language": "Language"
   },
   "anime": {
+    "list": {
+      "title": "Anime List",
+      "subtitle": "Explore a wide variety of anime"
+    },
     "detail": {
       "seasons": "Seasons",
       "episodes": "Episodes",

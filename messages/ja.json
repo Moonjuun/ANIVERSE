@@ -18,6 +18,10 @@
     "language": "言語"
   },
   "anime": {
+    "list": {
+      "title": "アニメ一覧",
+      "subtitle": "様々なアニメを探索しましょう"
+    },
     "detail": {
       "seasons": "シーズン",
       "episodes": "エピソード",
