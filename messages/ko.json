@@ -28,8 +28,31 @@
       "write_review": "리뷰 작성",
       "add_to_favorites": "찜하기",
       "reviews": "리뷰",
-      "reviews_coming_soon": "리뷰 기능은 곧 추가될 예정입니다."
+      "reviews_coming_soon": "리뷰 기능은 곧 추가될 예정입니다.",
+      "no_reviews": "아직 리뷰가 없습니다.",
+      "edit_review": "리뷰 수정",
+      "delete_review": "리뷰 삭제"
     }
+  },
+  "review": {
+    "rating": "평점",
+    "title": "제목",
+    "content": "내용",
+    "optional": "선택사항",
+    "title_placeholder": "리뷰 제목을 입력하세요 (선택사항)",
+    "content_placeholder": "리뷰 내용을 입력하세요 (최소 10자 이상)",
+    "submit": "리뷰 작성",
+    "update": "리뷰 수정",
+    "cancel": "취소",
+    "submitting": "제출 중...",
+    "create_error": "리뷰 작성에 실패했습니다.",
+    "update_error": "리뷰 수정에 실패했습니다.",
+    "delete_error": "리뷰 삭제에 실패했습니다.",
+    "unexpected_error": "예상치 못한 오류가 발생했습니다.",
+    "delete_confirm": "정말 이 리뷰를 삭제하시겠습니까?",
+    "by": "작성자",
+    "on": "작성일",
+    "no_reviews_yet": "아직 리뷰가 없습니다. 첫 번째 리뷰를 작성해보세요!"
   }
 }
 

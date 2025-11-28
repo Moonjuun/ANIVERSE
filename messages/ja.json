@@ -28,8 +28,31 @@
       "write_review": "レビューを書く",
       "add_to_favorites": "お気に入りに追加",
       "reviews": "レビュー",
-      "reviews_coming_soon": "レビュー機能は近日公開予定です。"
+      "reviews_coming_soon": "レビュー機能は近日公開予定です。",
+      "no_reviews": "レビューはまだありません。",
+      "edit_review": "レビューを編集",
+      "delete_review": "レビューを削除"
     }
+  },
+  "review": {
+    "rating": "評価",
+    "title": "タイトル",
+    "content": "内容",
+    "optional": "任意",
+    "title_placeholder": "レビュータイトルを入力（任意）",
+    "content_placeholder": "レビュー内容を入力（最低10文字）",
+    "submit": "レビューを投稿",
+    "update": "レビューを更新",
+    "cancel": "キャンセル",
+    "submitting": "送信中...",
+    "create_error": "レビューの作成に失敗しました。",
+    "update_error": "レビューの更新に失敗しました。",
+    "delete_error": "レビューの削除に失敗しました。",
+    "unexpected_error": "予期しないエラーが発生しました。",
+    "delete_confirm": "このレビューを削除してもよろしいですか？",
+    "by": "作成者",
+    "on": "作成日",
+    "no_reviews_yet": "レビューはまだありません。最初のレビューを書いてみましょう！"
   }
 }
 

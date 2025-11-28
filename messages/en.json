@@ -28,8 +28,31 @@
       "write_review": "Write Review",
       "add_to_favorites": "Add to Favorites",
       "reviews": "Reviews",
-      "reviews_coming_soon": "Review feature coming soon."
+      "reviews_coming_soon": "Review feature coming soon.",
+      "no_reviews": "No reviews yet.",
+      "edit_review": "Edit Review",
+      "delete_review": "Delete Review"
     }
+  },
+  "review": {
+    "rating": "Rating",
+    "title": "Title",
+    "content": "Content",
+    "optional": "Optional",
+    "title_placeholder": "Enter review title (optional)",
+    "content_placeholder": "Enter review content (minimum 10 characters)",
+    "submit": "Submit Review",
+    "update": "Update Review",
+    "cancel": "Cancel",
+    "submitting": "Submitting...",
+    "create_error": "Failed to create review.",
+    "update_error": "Failed to update review.",
+    "delete_error": "Failed to delete review.",
+    "unexpected_error": "An unexpected error occurred.",
+    "delete_confirm": "Are you sure you want to delete this review?",
+    "by": "By",
+    "on": "On",
+    "no_reviews_yet": "No reviews yet. Be the first to write a review!"
   }
 }
 
