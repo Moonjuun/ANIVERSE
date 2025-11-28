@@ -1,19 +1,59 @@
-import { getTranslations } from "next-intl/server";
+import { tmdbClient } from '@/lib/tmdb/client';
+import { AnimeGrid } from '@/components/anime/anime-grid';
 
-export default async function HomePage() {
-  const t = await getTranslations("home");
+interface HomePageProps {
+  params: Promise<{ locale: string }>;
+}
+
+export default async function HomePage({ params }: HomePageProps) {
+  const { locale } = await params;
+
+  // 언어 매핑: ko -> ko-KR, en -> en-US, ja -> ja-JP
+  const languageMap: Record<string, string> = {
+    ko: 'ko-KR',
+    en: 'en-US',
+    ja: 'ja-JP',
+  };
+
+  const language = languageMap[locale] || 'ko-KR';
+
+  // 인기 애니메이션 목록 가져오기
+  const [popularAnimes, topRatedAnimes] = await Promise.all([
+    tmdbClient.getAnimeShows(1, language),
+    tmdbClient.getAnimeShows(1, language).then((data) => ({
+      ...data,
+      results: data.results
+        .sort((a, b) => b.vote_average - a.vote_average)
+        .slice(0, 10),
+    })),
+  ]);
 
   return (
-    <main className="min-h-screen p-8">
-      <div className="mx-auto max-w-7xl">
-        <section className="flex min-h-[60vh] flex-col items-center justify-center gap-8 text-center">
-          <h1 className="text-4xl font-bold tracking-tight md:text-5xl">
-            {t("hero_title")}
+    <main className="min-h-screen">
+      {/* Hero Section */}
+      <section className="relative flex min-h-[60vh] flex-col items-center justify-center gap-8 px-4 text-center">
+        <div className="space-y-4">
+          <h1 className="text-4xl font-bold tracking-tight text-white md:text-5xl lg:text-6xl">
+            AniVerse에 오신 것을 환영합니다
           </h1>
-          <p className="max-w-2xl text-lg text-zinc-400 md:text-xl">
-            {t("hero_subtitle")}
+          <p className="mx-auto max-w-2xl text-lg text-zinc-400 md:text-xl">
+            애니메이션 리뷰와 추천을 한 곳에서 만나보세요
           </p>
-        </section>
+        </div>
+      </section>
+
+      {/* Content Section */}
+      <div className="mx-auto max-w-7xl space-y-12 px-4 pb-12 md:px-6 lg:px-8">
+        <AnimeGrid
+          animes={popularAnimes.results.slice(0, 10)}
+          locale={locale}
+          title="인기 애니메이션"
+        />
+        <AnimeGrid
+          animes={topRatedAnimes.results}
+          locale={locale}
+          title="평점 높은 애니메이션"
+        />
       </div>
     </main>
   );
