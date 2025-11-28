@@ -53,7 +53,8 @@
       "reviews_coming_soon": "レビュー機能は近日公開予定です。",
       "no_reviews": "レビューはまだありません。",
       "edit_review": "レビューを編集",
-      "delete_review": "レビューを削除"
+      "delete_review": "レビューを削除",
+      "watch_on": "視聴可能な場所"
     }
   },
   "review": {

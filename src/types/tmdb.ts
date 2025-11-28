@@ -70,3 +70,21 @@ export interface TMDBTVDetail extends TMDBTVShow {
   }>;
 }
 
+export interface TMDBWatchProvider {
+  display_priority: number;
+  logo_path: string;
+  provider_id: number;
+  provider_name: string;
+}
+
+export interface TMDBWatchProviders {
+  id: number;
+  results: {
+    [countryCode: string]: {
+      link?: string;
+      flatrate?: TMDBWatchProvider[];
+      rent?: TMDBWatchProvider[];
+      buy?: TMDBWatchProvider[];
+    };
+  };
+}

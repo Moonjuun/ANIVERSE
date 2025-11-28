@@ -53,7 +53,8 @@
       "reviews_coming_soon": "리뷰 기능은 곧 추가될 예정입니다.",
       "no_reviews": "아직 리뷰가 없습니다.",
       "edit_review": "리뷰 수정",
-      "delete_review": "리뷰 삭제"
+      "delete_review": "리뷰 삭제",
+      "watch_on": "시청 가능한 곳"
     }
   },
   "review": {

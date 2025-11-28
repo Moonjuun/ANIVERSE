@@ -8,6 +8,9 @@ import { Star, Calendar, Tv, Users } from "lucide-react";
 import { ReviewSection } from "@/components/features/ReviewSection";
 import { AnimeActions } from "@/components/features/AnimeActions";
 import { StructuredData } from "@/components/features/StructuredData";
+import { WatchProviders } from "@/components/features/WatchProviders";
+import { translateStatus, getStatusDescription } from "@/lib/utils/anime-status";
+import { formatDate } from "@/lib/utils/date-format";
 import type { TMDBTVDetail } from "@/types/tmdb";
 
 export async function generateStaticParams() {
@@ -101,8 +104,12 @@ export default async function AnimeDetailPage({
 
   // 애니메이션 상세 정보 가져오기
   let anime: TMDBTVDetail;
+  let watchProviders;
   try {
-    anime = await tmdbClient.getTVDetail(Number(id), language);
+    [anime, watchProviders] = await Promise.all([
+      tmdbClient.getTVDetail(Number(id), language),
+      tmdbClient.getTVWatchProviders(Number(id), language).catch(() => null),
+    ]);
   } catch (error) {
     console.error("TMDB API Error:", error);
     notFound();
@@ -111,6 +118,11 @@ export default async function AnimeDetailPage({
   const posterUrl = tmdbClient.getPosterURL(anime.poster_path);
   const backdropUrl = tmdbClient.getBackdropURL(anime.backdrop_path);
   const rating = anime.vote_average.toFixed(1);
+
+  // OTT 서비스 정보 추출 (한국 우선, 없으면 다른 국가)
+  const koreaProviders = watchProviders?.results["KR"]?.flatrate || [];
+  const usProviders = watchProviders?.results["US"]?.flatrate || [];
+  const providers = koreaProviders.length > 0 ? koreaProviders : usProviders;
 
   return (
     <div className="min-h-screen">
@@ -165,7 +177,7 @@ export default async function AnimeDetailPage({
                 {anime.first_air_date && (
                   <div className="flex items-center gap-2 text-zinc-400">
                     <Calendar className="h-4 w-4" />
-                    <span>{new Date(anime.first_air_date).getFullYear()}</span>
+                    <span>{formatDate(anime.first_air_date, locale)}</span>
                   </div>
                 )}
                 <div className="flex items-center gap-2 text-zinc-400">
@@ -233,12 +245,32 @@ export default async function AnimeDetailPage({
 
           {/* Sidebar */}
           <div className="space-y-6">
+            {/* Watch Providers (OTT) */}
+            {providers && providers.length > 0 && (
+              <WatchProviders
+                providers={providers}
+                locale={locale}
+                animeId={Number(id)}
+                animeName={anime.name}
+                link={watchProviders?.results["KR"]?.link || watchProviders?.results["US"]?.link}
+              />
+            )}
+
             {/* Status */}
             <div className="rounded-xl bg-zinc-900 p-6">
               <h3 className="mb-4 text-lg font-semibold text-white">
                 {t("status")}
               </h3>
-              <p className="text-zinc-400">{anime.status}</p>
+              <div className="space-y-2">
+                <p className="text-lg font-medium text-white">
+                  {translateStatus(anime.status, locale)}
+                </p>
+                {getStatusDescription(anime.status, locale) && (
+                  <p className="text-sm text-zinc-400">
+                    {getStatusDescription(anime.status, locale)}
+                  </p>
+                )}
+              </div>
             </div>
 
             {/* Production Companies */}

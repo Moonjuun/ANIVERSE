@@ -9,6 +9,7 @@ import type {
   TMDBDetail,
   TMDBTVDetail,
   TMDBGenre,
+  TMDBWatchProviders,
 } from '@/types/tmdb';
 
 const TMDB_BASE_URL = 'https://api.themoviedb.org/3';
@@ -196,6 +197,18 @@ class TMDBClient {
     ]);
 
     return { movie, tv };
+  }
+
+  /**
+   * TV 쇼 시청 가능한 OTT 서비스 가져오기
+   */
+  async getTVWatchProviders(
+    id: number,
+    language: string = 'ko-KR'
+  ): Promise<TMDBWatchProviders> {
+    return this.fetch<TMDBWatchProviders>(`/tv/${id}/watch/providers`, {
+      language,
+    });
   }
 
   /**

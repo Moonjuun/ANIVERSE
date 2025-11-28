@@ -53,7 +53,8 @@
       "reviews_coming_soon": "Review feature coming soon.",
       "no_reviews": "No reviews yet.",
       "edit_review": "Edit Review",
-      "delete_review": "Delete Review"
+      "delete_review": "Delete Review",
+      "watch_on": "Watch on"
     }
   },
   "review": {
