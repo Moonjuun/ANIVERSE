@@ -277,6 +277,62 @@ export async function getReviews(animeId: number) {
 }
 
 /**
+ * 모든 리뷰 목록 조회 (페이지네이션)
+ */
+export async function getAllReviews(page: number = 1, limit: number = 20) {
+  const supabase = await createClient();
+
+  const from = (page - 1) * limit;
+  const to = from + limit - 1;
+
+  const { data, error, count } = await supabase
+    .from("reviews")
+    .select("*", { count: "exact" })
+    .order("created_at", { ascending: false })
+    .range(from, to);
+
+  if (error) {
+    return {
+      success: false,
+      error: error.message || "리뷰를 불러오는데 실패했습니다.",
+      data: [],
+      total: 0,
+      page,
+      totalPages: 0,
+    };
+  }
+
+  // user_profiles 정보를 별도로 조회
+  let reviewsWithProfiles: any[] = data || [];
+  if (data && data.length > 0) {
+    const userIds = [...new Set(data.map((r) => r.user_id))];
+    const { data: profiles } = await supabase
+      .from("user_profiles")
+      .select("id, username, display_name, avatar_url")
+      .in("id", userIds);
+
+    // 리뷰에 프로필 정보 병합
+    const profileMap = new Map(
+      (profiles || []).map((p) => [p.id, p])
+    );
+    reviewsWithProfiles = data.map((review) => ({
+      ...review,
+      user_profiles: profileMap.get(review.user_id) || null,
+    }));
+  }
+
+  const totalPages = count ? Math.ceil(count / limit) : 0;
+
+  return {
+    success: true,
+    data: reviewsWithProfiles,
+    total: count || 0,
+    page,
+    totalPages,
+  };
+}
+
+/**
  * 사용자의 특정 애니메이션 리뷰 조회
  */
 export async function getUserReview(animeId: number) {
