@@ -16,6 +16,20 @@
     "login": "로그인",
     "logout": "로그아웃",
     "language": "언어"
+  },
+  "anime": {
+    "detail": {
+      "seasons": "시즌",
+      "episodes": "에피소드",
+      "ratings": "명 평가",
+      "overview": "줄거리",
+      "status": "상태",
+      "production": "제작사",
+      "write_review": "리뷰 작성",
+      "add_to_favorites": "찜하기",
+      "reviews": "리뷰",
+      "reviews_coming_soon": "리뷰 기능은 곧 추가될 예정입니다."
+    }
   }
 }
 

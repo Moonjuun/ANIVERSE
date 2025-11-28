@@ -16,6 +16,20 @@
     "login": "ログイン",
     "logout": "ログアウト",
     "language": "言語"
+  },
+  "anime": {
+    "detail": {
+      "seasons": "シーズン",
+      "episodes": "エピソード",
+      "ratings": "件の評価",
+      "overview": "あらすじ",
+      "status": "ステータス",
+      "production": "制作会社",
+      "write_review": "レビューを書く",
+      "add_to_favorites": "お気に入りに追加",
+      "reviews": "レビュー",
+      "reviews_coming_soon": "レビュー機能は近日公開予定です。"
+    }
   }
 }
 

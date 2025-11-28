@@ -1,10 +1,11 @@
-import Image from 'next/image';
-import Link from 'next/link';
-import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { tmdbClient } from '@/lib/tmdb/client';
-import type { TMDBTVShow } from '@/types/tmdb';
-import { Star } from 'lucide-react';
+import Image from "next/image";
+import { Link } from "@/i18n/navigation";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { tmdbClient } from "@/lib/tmdb/client";
+import { ROUTES } from "@/constants/routes";
+import type { TMDBTVShow } from "@/types/tmdb";
+import { Star } from "lucide-react";
 
 interface AnimeCardProps {
   anime: TMDBTVShow;
@@ -16,7 +17,7 @@ export function AnimeCard({ anime, locale = 'ko' }: AnimeCardProps) {
   const rating = anime.vote_average.toFixed(1);
 
   return (
-    <Link href={`/${locale}/anime/${anime.id}`}>
+    <Link href={ROUTES.ANIME.DETAIL(anime.id)}>
       <Card className="group cursor-pointer">
         <div className="relative aspect-[2/3] overflow-hidden rounded-t-xl">
           <Image

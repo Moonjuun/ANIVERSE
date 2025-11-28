@@ -1,18 +1,21 @@
 /**
  * 라우트 상수 정의
  * 하드코딩된 경로를 사용하지 않고 이 상수를 사용해야 함
+ * 
+ * ⚠️ next-intl의 Link를 사용할 때는 locale을 포함하지 않음 (자동 추가됨)
+ * 예: <Link href={ROUTES.ANIME.DETAIL(id)}> (locale 불필요)
  */
 
 export const ROUTES = {
-  HOME: (locale: string) => `/${locale}`,
+  HOME: () => `/`,
   ANIME: {
-    LIST: (locale: string) => `/${locale}/anime`,
-    DETAIL: (locale: string, id: string | number) => `/${locale}/anime/${id}`,
+    LIST: () => `/anime`,
+    DETAIL: (id: string | number) => `/anime/${id}`,
   },
-  PROFILE: (locale: string) => `/${locale}/profile`,
+  PROFILE: () => `/profile`,
   REVIEWS: {
-    LIST: (locale: string) => `/${locale}/reviews`,
-    DETAIL: (locale: string, id: string | number) => `/${locale}/reviews/${id}`,
+    LIST: () => `/reviews`,
+    DETAIL: (id: string | number) => `/reviews/${id}`,
   },
 } as const;
 

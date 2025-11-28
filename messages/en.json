@@ -16,6 +16,20 @@
     "login": "Login",
     "logout": "Logout",
     "language": "Language"
+  },
+  "anime": {
+    "detail": {
+      "seasons": "Seasons",
+      "episodes": "Episodes",
+      "ratings": "ratings",
+      "overview": "Overview",
+      "status": "Status",
+      "production": "Production Companies",
+      "write_review": "Write Review",
+      "add_to_favorites": "Add to Favorites",
+      "reviews": "Reviews",
+      "reviews_coming_soon": "Review feature coming soon."
+    }
   }
 }
 
