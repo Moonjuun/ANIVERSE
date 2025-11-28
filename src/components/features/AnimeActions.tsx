@@ -2,17 +2,18 @@
 
 import { Button } from "@/components/ui/button";
 import { AuthGuard } from "@/components/auth/auth-guard";
+import { FavoriteButton } from "./FavoriteButton";
 import { useModalStore } from "@/stores/useModalStore";
 import { useTranslations } from "next-intl";
 
 interface AnimeActionsProps {
+  animeId: number;
   onWriteReview?: () => void;
-  onAddToFavorites?: () => void;
 }
 
 export function AnimeActions({
+  animeId,
   onWriteReview,
-  onAddToFavorites,
 }: AnimeActionsProps) {
   const t = useTranslations("anime.detail");
   const { setLoginModalOpen } = useModalStore();
@@ -34,21 +35,7 @@ export function AnimeActions({
           {t("write_review")}
         </Button>
       </AuthGuard>
-      <AuthGuard
-        fallback={
-          <Button
-            variant="secondary"
-            size="lg"
-            onClick={() => setLoginModalOpen(true)}
-          >
-            {t("add_to_favorites")}
-          </Button>
-        }
-      >
-        <Button variant="secondary" size="lg" onClick={onAddToFavorites}>
-          {t("add_to_favorites")}
-        </Button>
-      </AuthGuard>
+      <FavoriteButton animeId={animeId} size="lg" />
     </div>
   );
 }
