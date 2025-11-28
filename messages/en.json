@@ -2,7 +2,8 @@
   "common": {
     "loading": "Loading...",
     "error": "An error occurred",
-    "retry": "Retry"
+    "retry": "Retry",
+    "all_loaded": "All anime loaded"
   },
   "home": {
     "hero_title": "Welcome to AniVerse",
@@ -21,6 +22,23 @@
     "list": {
       "title": "Anime List",
       "subtitle": "Explore a wide variety of anime"
+    },
+    "filters": {
+      "title": "Filters",
+      "genre": "Genre",
+      "year": "Year",
+      "sort_by": "Sort By",
+      "all_years": "All Years",
+      "apply": "Apply",
+      "clear_all": "Clear All",
+      "sort": {
+        "popularity_desc": "Popularity (High)",
+        "popularity_asc": "Popularity (Low)",
+        "rating_desc": "Rating (High)",
+        "rating_asc": "Rating (Low)",
+        "release_desc": "Newest",
+        "release_asc": "Oldest"
+      }
     },
     "detail": {
       "seasons": "Seasons",

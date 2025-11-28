@@ -2,7 +2,8 @@
   "common": {
     "loading": "読み込み中...",
     "error": "エラーが発生しました",
-    "retry": "再試行"
+    "retry": "再試行",
+    "all_loaded": "すべてのアニメを読み込みました"
   },
   "home": {
     "hero_title": "AniVerseへようこそ",
@@ -21,6 +22,23 @@
     "list": {
       "title": "アニメ一覧",
       "subtitle": "様々なアニメを探索しましょう"
+    },
+    "filters": {
+      "title": "フィルター",
+      "genre": "ジャンル",
+      "year": "年",
+      "sort_by": "並び替え",
+      "all_years": "すべての年",
+      "apply": "適用",
+      "clear_all": "すべてクリア",
+      "sort": {
+        "popularity_desc": "人気順（高い）",
+        "popularity_asc": "人気順（低い）",
+        "rating_desc": "評価順（高い）",
+        "rating_asc": "評価順（低い）",
+        "release_desc": "最新",
+        "release_asc": "古い順"
+      }
     },
     "detail": {
       "seasons": "シーズン",

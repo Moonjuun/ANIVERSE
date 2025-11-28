@@ -2,7 +2,8 @@
   "common": {
     "loading": "로딩 중...",
     "error": "오류가 발생했습니다",
-    "retry": "다시 시도"
+    "retry": "다시 시도",
+    "all_loaded": "모든 애니메이션을 불러왔습니다"
   },
   "home": {
     "hero_title": "AniVerse에 오신 것을 환영합니다",
@@ -21,6 +22,23 @@
     "list": {
       "title": "애니메이션 목록",
       "subtitle": "다양한 애니메이션을 탐색해보세요"
+    },
+    "filters": {
+      "title": "필터",
+      "genre": "장르",
+      "year": "연도",
+      "sort_by": "정렬",
+      "all_years": "전체 연도",
+      "apply": "적용",
+      "clear_all": "전체 초기화",
+      "sort": {
+        "popularity_desc": "인기순 (높은순)",
+        "popularity_asc": "인기순 (낮은순)",
+        "rating_desc": "평점순 (높은순)",
+        "rating_asc": "평점순 (낮은순)",
+        "release_desc": "최신순",
+        "release_asc": "오래된순"
+      }
     },
     "detail": {
       "seasons": "시즌",
