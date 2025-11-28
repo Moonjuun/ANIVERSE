@@ -26,13 +26,21 @@ const providerNames: Record<string, { ko: string; en: string; ja: string }> = {
 };
 
 // OTT 서비스별 검색 링크 생성 함수
+// 참고: 일부 서비스(왓챠, 티빙 등)는 외부 검색 링크를 제공하지 않으므로
+// TMDB watch 페이지로 연결하여 사용자가 해당 서비스를 선택할 수 있도록 함
 function getProviderSearchLink(
   providerName: string,
   animeName: string,
   animeId: number,
-  locale: string
+  locale: string,
+  tmdbLink?: string
 ): string {
   const encodedName = encodeURIComponent(animeName);
+  
+  // TMDB link가 제공되면 우선 사용
+  if (tmdbLink) {
+    return tmdbLink;
+  }
   
   switch (providerName) {
     case "Netflix":
@@ -48,14 +56,10 @@ function getProviderSearchLink(
     case "Crunchyroll":
       return `https://www.crunchyroll.com/search?q=${encodedName}`;
     case "WATCHA":
-      // 왓챠 검색 URL
-      return `https://watcha.com/search?q=${encodedName}`;
     case "wavve":
-      // 웨이브 검색 URL
-      return `https://www.wavve.com/search?keyword=${encodedName}`;
     case "TVING":
-      // 티빙 검색 URL
-      return `https://www.tving.com/search?q=${encodedName}`;
+      // 한국 OTT 서비스는 검색 링크가 불안정하므로 TMDB watch 페이지로 연결
+      return `https://www.themoviedb.org/tv/${animeId}/watch`;
     default:
       // 기본적으로 TMDB watch 페이지로 연결
       return `https://www.themoviedb.org/tv/${animeId}/watch`;
@@ -89,7 +93,8 @@ export function WatchProviders({ providers, locale, animeId, animeName, link }: 
             provider.provider_name,
             animeName,
             animeId,
-            locale
+            locale,
+            link
           );
           
           return (
