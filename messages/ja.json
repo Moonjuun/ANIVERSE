@@ -7,6 +7,15 @@
   "home": {
     "hero_title": "AniVerseへようこそ",
     "hero_subtitle": "アニメレビューとおすすめを一箇所で"
+  },
+  "header": {
+    "home": "ホーム",
+    "anime": "アニメ",
+    "reviews": "レビュー",
+    "profile": "プロフィール",
+    "login": "ログイン",
+    "logout": "ログアウト",
+    "language": "言語"
   }
 }
 
