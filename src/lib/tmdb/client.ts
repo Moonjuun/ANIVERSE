@@ -96,17 +96,33 @@ class TMDBClient {
   async getAnimeShows(
     page: number = 1,
     language: string = 'ko-KR',
-    isClient: boolean = false
+    isClient: boolean = false,
+    options?: {
+      genre?: number;
+      year?: number;
+      sortBy?: 'popularity.desc' | 'popularity.asc' | 'vote_average.desc' | 'vote_average.asc' | 'first_air_date.desc' | 'first_air_date.asc';
+    }
   ): Promise<TMDBResponse<TMDBTVShow>> {
-    // 애니메이션 장르 ID는 16
+    const params: Record<string, string | number> = {
+      page,
+      language,
+      with_genres: '16', // 애니메이션 장르 ID는 16
+      sort_by: options?.sortBy || 'popularity.desc',
+    };
+
+    // 추가 장르 필터
+    if (options?.genre) {
+      params.with_genres = `16,${options.genre}`;
+    }
+
+    // 연도 필터
+    if (options?.year) {
+      params.first_air_date_year = options.year;
+    }
+
     return this.fetch<TMDBResponse<TMDBTVShow>>(
       '/discover/tv',
-      {
-        page,
-        language,
-        with_genres: '16',
-        sort_by: 'popularity.desc',
-      },
+      params,
       isClient
     );
   }
