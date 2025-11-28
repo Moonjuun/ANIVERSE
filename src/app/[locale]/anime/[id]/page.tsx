@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import { getTranslations } from "next-intl/server";
@@ -6,11 +7,78 @@ import { Badge } from "@/components/ui/badge";
 import { Star, Calendar, Tv, Users } from "lucide-react";
 import { ReviewSection } from "@/components/features/ReviewSection";
 import { AnimeActions } from "@/components/features/AnimeActions";
+import { StructuredData } from "@/components/features/StructuredData";
 import type { TMDBTVDetail } from "@/types/tmdb";
 
 export async function generateStaticParams() {
   // 동적 생성이므로 빈 배열 반환 (ISR 사용)
   return [];
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string; id: string }>;
+}): Promise<Metadata> {
+  const { locale, id } = await params;
+
+  // 언어 매핑
+  const languageMap: Record<string, string> = {
+    ko: "ko-KR",
+    en: "en-US",
+    ja: "ja-JP",
+  };
+  const language = languageMap[locale] || "ko-KR";
+
+  try {
+    const anime = await tmdbClient.getTVDetail(Number(id), language);
+    const title = `${anime.name} | AniVerse`;
+    const description =
+      anime.overview || `${anime.name}에 대한 정보와 리뷰를 확인해보세요.`;
+    const posterUrl = tmdbClient.getPosterURL(anime.poster_path);
+    const genres = anime.genres.map((g) => g.name).join(", ");
+    const ogImageUrl = `/api/og?title=${encodeURIComponent(anime.name)}&rating=${anime.vote_average.toFixed(1)}&poster=${encodeURIComponent(posterUrl)}`;
+
+    return {
+      title,
+      description,
+      keywords: [
+        anime.name,
+        anime.original_name,
+        genres,
+        "애니메이션",
+        "anime",
+        "리뷰",
+        "review",
+      ],
+      openGraph: {
+        title,
+        description,
+        type: "video.tv_show",
+        locale: locale === "ko" ? "ko_KR" : locale === "ja" ? "ja_JP" : "en_US",
+        siteName: "AniVerse",
+        images: [
+          {
+            url: ogImageUrl,
+            width: 1200,
+            height: 630,
+            alt: anime.name,
+          },
+        ],
+      },
+      twitter: {
+        card: "summary_large_image",
+        title,
+        description,
+        images: [ogImageUrl],
+      },
+    };
+  } catch (error) {
+    return {
+      title: "애니메이션 상세 | AniVerse",
+      description: "애니메이션 정보를 불러올 수 없습니다.",
+    };
+  }
 }
 
 interface AnimeDetailPageProps {
@@ -46,6 +114,7 @@ export default async function AnimeDetailPage({
 
   return (
     <div className="min-h-screen">
+      <StructuredData type="TVSeries" anime={anime} locale={locale} />
       {/* Hero Section with Backdrop */}
       <section className="relative h-[60vh] min-h-[400px] overflow-hidden">
         {backdropUrl && (

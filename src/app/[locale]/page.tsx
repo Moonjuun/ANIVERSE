@@ -1,9 +1,40 @@
+import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 import { tmdbClient } from "@/lib/tmdb/client";
 import { AnimeGrid } from "@/components/anime/anime-grid";
 import { routing } from "@/i18n/routing";
 
 export async function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "home" });
+
+  const title = t("hero_title");
+  const description = t("hero_subtitle");
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      type: "website",
+      locale: locale === "ko" ? "ko_KR" : locale === "ja" ? "ja_JP" : "en_US",
+      siteName: "AniVerse",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+    },
+  };
 }
 
 interface HomePageProps {

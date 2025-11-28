@@ -1,18 +1,102 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 import { getReviewById } from "@/actions/review";
 import { tmdbClient } from "@/lib/tmdb/client";
 import { Badge } from "@/components/ui/badge";
-import { Star, User, Calendar, Edit2, Trash2 } from "lucide-react";
+import { Star, User, Calendar } from "lucide-react";
 import { routing } from "@/i18n/routing";
 import { Link } from "@/i18n/navigation";
 import { ROUTES } from "@/constants/routes";
 import { createClient } from "@/lib/supabase/server";
 import { ReviewActions } from "@/components/features/ReviewActions";
+import { StructuredData } from "@/components/features/StructuredData";
 
 export async function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string; id: string }>;
+}): Promise<Metadata> {
+  const { locale, id } = await params;
+  const t = await getTranslations({ locale, namespace: "review.detail" });
+
+  const reviewResult = await getReviewById(id);
+
+  if (!reviewResult.success || !reviewResult.data) {
+    return {
+      title: t("untitled_review") + " | AniVerse",
+      description: "리뷰를 찾을 수 없습니다.",
+    };
+  }
+
+  const review = reviewResult.data;
+  const displayName =
+    (review.user_profiles as any)?.display_name ||
+    (review.user_profiles as any)?.username ||
+    "익명";
+
+  // 언어 매핑
+  const languageMap: Record<string, string> = {
+    ko: "ko-KR",
+    en: "en-US",
+    ja: "ja-JP",
+  };
+  const language = languageMap[locale] || "ko-KR";
+
+  let anime;
+  try {
+    anime = await tmdbClient.getTVDetail(review.anime_id, language);
+  } catch (error) {
+    console.error("Failed to fetch anime:", error);
+  }
+
+  const title = review.title
+    ? `${review.title} - ${anime?.name || "리뷰"} | AniVerse`
+    : `${anime?.name || "애니메이션"} 리뷰 | AniVerse`;
+  const description = review.content.slice(0, 160) || `${anime?.name || "애니메이션"}에 대한 리뷰입니다.`;
+
+  return {
+    title,
+    description,
+    keywords: [
+      anime?.name,
+      anime?.original_name,
+      "리뷰",
+      "review",
+      displayName,
+      "애니메이션",
+      "anime",
+    ],
+    openGraph: {
+      title,
+      description,
+      type: "article",
+      locale: locale === "ko" ? "ko_KR" : locale === "ja" ? "ja_JP" : "en_US",
+      siteName: "AniVerse",
+      authors: [displayName],
+      images: anime
+        ? [
+            {
+              url: tmdbClient.getPosterURL(anime.poster_path),
+              width: 500,
+              height: 750,
+              alt: anime.name,
+            },
+          ]
+        : [],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: anime ? [tmdbClient.getPosterURL(anime.poster_path)] : [],
+    },
+  };
 }
 
 interface ReviewDetailPageProps {
@@ -69,6 +153,14 @@ export default async function ReviewDetailPage({
 
   return (
     <main className="min-h-screen">
+      {anime && (
+        <StructuredData
+          type="Review"
+          anime={anime}
+          review={review}
+          locale={locale}
+        />
+      )}
       {/* Hero Section with Backdrop */}
       {backdropUrl && anime && (
         <section className="relative h-[40vh] min-h-[300px] overflow-hidden">
