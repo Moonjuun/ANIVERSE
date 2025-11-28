@@ -3,8 +3,9 @@ import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 import { tmdbClient } from "@/lib/tmdb/client";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Star, Calendar, Tv, Users } from "lucide-react";
+import { ReviewSection } from "@/components/features/ReviewSection";
+import { AnimeActions } from "@/components/features/AnimeActions";
 import type { TMDBTVDetail } from "@/types/tmdb";
 
 export async function generateStaticParams() {
@@ -126,14 +127,7 @@ export default async function AnimeDetailPage({
               )}
 
               {/* Actions */}
-              <div className="flex gap-4">
-                <Button variant="primary" size="lg">
-                  {t("write_review")}
-                </Button>
-                <Button variant="secondary" size="lg">
-                  {t("add_to_favorites")}
-                </Button>
-              </div>
+              <AnimeActions />
             </div>
           </div>
         </div>
@@ -163,15 +157,8 @@ export default async function AnimeDetailPage({
               </div>
             )}
 
-            {/* Reviews Section (TODO) */}
-            <div>
-              <h2 className="mb-4 text-2xl font-semibold text-white">
-                {t("reviews")}
-              </h2>
-              <div className="rounded-xl bg-zinc-900 p-8 text-center">
-                <p className="text-zinc-400">{t("reviews_coming_soon")}</p>
-              </div>
-            </div>
+            {/* Reviews Section */}
+            <ReviewSection animeId={Number(id)} />
           </div>
 
           {/* Sidebar */}
