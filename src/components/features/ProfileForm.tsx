@@ -8,6 +8,7 @@ import { updateProfile, type UpdateProfileInput } from "@/actions/profile";
 import { Button } from "@/components/ui/button";
 import { useTranslations } from "next-intl";
 import type { Database } from "@/types/supabase";
+import { useToast } from "@/lib/utils/toast";
 
 type UserProfile = Database["public"]["Tables"]["user_profiles"]["Row"];
 
@@ -27,6 +28,7 @@ interface ProfileFormProps {
 
 export function ProfileForm({ profile, onSuccess }: ProfileFormProps) {
   const t = useTranslations("profile");
+  const toast = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const {
@@ -57,14 +59,15 @@ export function ProfileForm({ profile, onSuccess }: ProfileFormProps) {
       const result = await updateProfile(input);
 
       if (!result.success) {
-        alert(result.error || t("update_error"));
+        toast.error(result.error || t("update_error"));
         return;
       }
 
+      toast.success(t("update"));
       onSuccess?.();
     } catch (error) {
       console.error("Profile update error:", error);
-      alert(t("unexpected_error"));
+      toast.error(t("unexpected_error"));
     } finally {
       setIsSubmitting(false);
     }

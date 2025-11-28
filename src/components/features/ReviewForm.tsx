@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Star } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils/cn";
+import { useToast } from "@/lib/utils/toast";
 
 const reviewSchema = z.object({
   rating: z.number().min(1).max(10),
@@ -37,6 +38,7 @@ export function ReviewForm({
   onCancel,
 }: ReviewFormProps) {
   const t = useTranslations("review");
+  const toast = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [hoveredRating, setHoveredRating] = useState<number | null>(null);
 
@@ -71,7 +73,7 @@ export function ReviewForm({
         });
 
         if (!result.success) {
-          alert(result.error || t("update_error"));
+          toast.error(result.error || t("update_error"));
           return;
         }
       } else {
@@ -86,15 +88,16 @@ export function ReviewForm({
         const result = await createReview(input);
 
         if (!result.success) {
-          alert(result.error || t("create_error"));
+          toast.error(result.error || t("create_error"));
           return;
         }
       }
 
+      toast.success(existingReview ? t("update") : t("submit"));
       onSuccess?.();
     } catch (error) {
       console.error("Review submission error:", error);
-      alert(t("unexpected_error"));
+      toast.error(t("unexpected_error"));
     } finally {
       setIsSubmitting(false);
     }

@@ -8,6 +8,7 @@ import { AuthGuard } from "@/components/auth/auth-guard";
 import { useModalStore } from "@/stores/useModalStore";
 import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils/cn";
+import { useToast } from "@/lib/utils/toast";
 
 interface FavoriteButtonProps {
   animeId: number;
@@ -23,6 +24,7 @@ export function FavoriteButton({
   className,
 }: FavoriteButtonProps) {
   const t = useTranslations("favorite");
+  const toast = useToast();
   const { setLoginModalOpen } = useModalStore();
   const [favorited, setFavorited] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -49,20 +51,22 @@ export function FavoriteButton({
         const result = await removeFavorite(animeId);
         if (result.success) {
           setFavorited(false);
+          toast.success(t("remove"));
         } else {
-          alert(result.error || t("remove_error"));
+          toast.error(result.error || t("remove_error"));
         }
       } else {
         const result = await addFavorite(animeId);
         if (result.success) {
           setFavorited(true);
+          toast.success(t("add"));
         } else {
-          alert(result.error || t("add_error"));
+          toast.error(result.error || t("add_error"));
         }
       }
     } catch (error) {
       console.error("Favorite toggle error:", error);
-      alert(t("unexpected_error"));
+      toast.error(t("unexpected_error"));
     } finally {
       setSubmitting(false);
     }

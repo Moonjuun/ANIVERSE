@@ -5,6 +5,7 @@ import { getReviews, deleteReview, type getReviews as GetReviewsType } from "@/a
 import { Button } from "@/components/ui/button";
 import { Star, Trash2, Edit2 } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { useToast } from "@/lib/utils/toast";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { cn } from "@/lib/utils/cn";
 import type { Database } from "@/types/supabase";
@@ -26,6 +27,7 @@ interface ReviewListProps {
 
 export function ReviewList({ animeId, onEdit, refreshKey }: ReviewListProps) {
   const t = useTranslations("review");
+  const toast = useToast();
   const { user } = useAuthStore();
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
@@ -54,9 +56,10 @@ export function ReviewList({ animeId, onEdit, refreshKey }: ReviewListProps) {
     setDeletingId(null);
 
     if (result.success) {
+      toast.success(t("delete_review"));
       loadReviews();
     } else {
-      alert(result.error || t("delete_error"));
+      toast.error(result.error || t("delete_error"));
     }
   };
 
