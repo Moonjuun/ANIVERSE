@@ -29,7 +29,8 @@ class TMDBClient {
 
   private async fetch<T>(
     endpoint: string,
-    params?: Record<string, string | number>
+    params?: Record<string, string | number>,
+    isClient: boolean = false
   ): Promise<T> {
     const searchParams = new URLSearchParams(
       Object.fromEntries(
@@ -39,18 +40,25 @@ class TMDBClient {
 
     const url = `${this.baseURL}${endpoint}?${searchParams.toString()}`;
 
-    const response = await fetch(url, {
+    const fetchOptions: RequestInit = {
       headers: {
         Authorization: `Bearer ${this.accessToken}`,
         'Content-Type': 'application/json',
       },
-      next: {
+    };
+
+    // 서버 컴포넌트에서만 next 옵션 사용
+    if (!isClient) {
+      (fetchOptions as any).next = {
         revalidate: 3600, // 1시간 캐시
-      },
-    });
+      };
+    }
+
+    const response = await fetch(url, fetchOptions);
 
     if (!response.ok) {
-      throw new Error(`TMDB API error: ${response.statusText}`);
+      const errorText = await response.text();
+      throw new Error(`TMDB API error: ${response.status} ${response.statusText} - ${errorText}`);
     }
 
     return response.json();
@@ -87,15 +95,20 @@ class TMDBClient {
    */
   async getAnimeShows(
     page: number = 1,
-    language: string = 'ko-KR'
+    language: string = 'ko-KR',
+    isClient: boolean = false
   ): Promise<TMDBResponse<TMDBTVShow>> {
     // 애니메이션 장르 ID는 16
-    return this.fetch<TMDBResponse<TMDBTVShow>>('/discover/tv', {
-      page,
-      language,
-      with_genres: '16',
-      sort_by: 'popularity.desc',
-    });
+    return this.fetch<TMDBResponse<TMDBTVShow>>(
+      '/discover/tv',
+      {
+        page,
+        language,
+        with_genres: '16',
+        sort_by: 'popularity.desc',
+      },
+      isClient
+    );
   }
 
   /**
@@ -124,22 +137,31 @@ class TMDBClient {
   async search(
     query: string,
     page: number = 1,
-    language: string = 'ko-KR'
+    language: string = 'ko-KR',
+    isClient: boolean = false
   ): Promise<{
     movies: TMDBResponse<TMDBMovie>;
     tv: TMDBResponse<TMDBTVShow>;
   }> {
     const [movies, tv] = await Promise.all([
-      this.fetch<TMDBResponse<TMDBMovie>>('/search/movie', {
-        query,
-        page,
-        language,
-      }),
-      this.fetch<TMDBResponse<TMDBTVShow>>('/search/tv', {
-        query,
-        page,
-        language,
-      }),
+      this.fetch<TMDBResponse<TMDBMovie>>(
+        '/search/movie',
+        {
+          query,
+          page,
+          language,
+        },
+        isClient
+      ),
+      this.fetch<TMDBResponse<TMDBTVShow>>(
+        '/search/tv',
+        {
+          query,
+          page,
+          language,
+        },
+        isClient
+      ),
     ]);
 
     return { movies, tv };

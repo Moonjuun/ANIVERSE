@@ -5,19 +5,19 @@ import { AnimeGrid } from "@/components/anime/anime-grid";
 import type { TMDBResponse, TMDBTVShow } from "@/types/tmdb";
 import { useEffect, useRef } from "react";
 
-interface AnimeListClientProps {
+interface SearchResultsClientProps {
   initialData: TMDBResponse<TMDBTVShow>;
+  query: string;
   locale: string;
   language: string;
-  initialPage: number;
 }
 
-export function AnimeListClient({
+export function SearchResultsClient({
   initialData,
+  query,
   locale,
   language,
-  initialPage,
-}: AnimeListClientProps) {
+}: SearchResultsClientProps) {
   const loadMoreRef = useRef<HTMLDivElement>(null);
 
   const {
@@ -26,27 +26,33 @@ export function AnimeListClient({
     hasNextPage,
     isFetchingNextPage,
     status,
-    error,
   } = useInfiniteQuery({
-    queryKey: ["anime-list", locale, language],
-    queryFn: async ({ pageParam }) => {
-      try {
-        const page = typeof pageParam === "number" ? pageParam : initialPage;
-        // API Route를 통해 데이터 가져오기
-        const response = await fetch(
-          `/api/anime?page=${page}&language=${encodeURIComponent(language)}`
-        );
-        if (!response.ok) {
-          throw new Error(`API error: ${response.status} ${response.statusText}`);
-        }
-        const result = await response.json();
-        return result;
-      } catch (err) {
-        console.error("AnimeListClient queryFn error:", err);
-        throw err;
+    queryKey: ["search", query, locale, language],
+    queryFn: async ({ pageParam = 1 }) => {
+      // API Route를 통해 데이터 가져오기
+      const response = await fetch(
+        `/api/search?q=${encodeURIComponent(query)}&page=${pageParam}&language=${encodeURIComponent(language)}`
+      );
+      if (!response.ok) {
+        throw new Error(`API error: ${response.status} ${response.statusText}`);
       }
+      const result = await response.json() as {
+        movies: TMDBResponse<TMDBTVShow>;
+        tv: TMDBResponse<TMDBTVShow>;
+      };
+      // 애니메이션 장르 ID는 16
+      const ANIME_GENRE_ID = 16;
+      // TV 쇼 중에서 애니메이션 장르만 필터링
+      const animeResults = result.tv.results.filter(
+        (show: TMDBTVShow) => show.genre_ids && show.genre_ids.includes(ANIME_GENRE_ID)
+      );
+      return {
+        ...result.tv,
+        results: animeResults,
+        total_results: animeResults.length, // 정확한 개수는 아니지만 필터링된 결과 수
+      };
     },
-    initialPageParam: initialPage,
+    initialPageParam: 1,
     getNextPageParam: (lastPage) => {
       if (lastPage.page < lastPage.total_pages) {
         return lastPage.page + 1;
@@ -55,29 +61,31 @@ export function AnimeListClient({
     },
     initialData: {
       pages: [initialData],
-      pageParams: [initialPage],
+      pageParams: [1],
     },
+    enabled: !!query.trim(),
   });
 
   // Intersection Observer로 무한 스크롤 구현
   useEffect(() => {
-    if (!loadMoreRef.current) return;
-
     const observer = new IntersectionObserver(
       (entries) => {
-        const entry = entries[0];
-        if (entry.isIntersecting && hasNextPage && !isFetchingNextPage) {
+        if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage) {
           fetchNextPage();
         }
       },
-      { threshold: 0.1, rootMargin: "100px" }
+      { threshold: 0.1 }
     );
 
     const currentRef = loadMoreRef.current;
-    observer.observe(currentRef);
+    if (currentRef) {
+      observer.observe(currentRef);
+    }
 
     return () => {
-      observer.disconnect();
+      if (currentRef) {
+        observer.unobserve(currentRef);
+      }
     };
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
@@ -87,12 +95,15 @@ export function AnimeListClient({
   if (status === "error") {
     return (
       <div className="rounded-xl bg-zinc-900 p-8 text-center">
-        <p className="text-zinc-400">애니메이션 목록을 불러오는데 실패했습니다.</p>
-        {error && (
-          <p className="mt-2 text-sm text-rose-500">
-            {error instanceof Error ? error.message : String(error)}
-          </p>
-        )}
+        <p className="text-zinc-400">검색 결과를 불러오는데 실패했습니다.</p>
+      </div>
+    );
+  }
+
+  if (allAnimes.length === 0 && !isFetchingNextPage) {
+    return (
+      <div className="rounded-xl bg-zinc-900 p-8 text-center">
+        <p className="text-zinc-400">검색 결과가 없습니다.</p>
       </div>
     );
   }
@@ -111,7 +122,7 @@ export function AnimeListClient({
         )}
         {!hasNextPage && allAnimes.length > 0 && (
           <div className="py-8 text-center text-zinc-400">
-            모든 애니메이션을 불러왔습니다.
+            모든 검색 결과를 불러왔습니다.
           </div>
         )}
       </div>
