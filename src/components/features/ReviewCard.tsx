@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Star, User } from "lucide-react";
 import { ROUTES } from "@/constants/routes";
 import { tmdbClient } from "@/lib/tmdb/client";
+import { useTranslations } from "next-intl";
 import Image from "next/image";
 import type { Database } from "@/types/supabase";
 import type { TMDBTVDetail } from "@/types/tmdb";
@@ -26,6 +27,7 @@ interface ReviewCardProps {
 }
 
 export function ReviewCard({ review, anime, locale = "ko" }: ReviewCardProps) {
+  const t = useTranslations("review");
   const displayName =
     review.user_profiles?.display_name ||
     review.user_profiles?.username ||
@@ -114,14 +116,12 @@ export function ReviewCard({ review, anime, locale = "ko" }: ReviewCardProps) {
                   </p>
                 </div>
               </div>
-              {anime && (
-                <Link
-                  href={ROUTES.ANIME.DETAIL(anime.id)}
-                  className="text-sm text-blue-500 transition-colors hover:text-blue-400"
-                >
-                  자세히 보기 →
-                </Link>
-              )}
+              <Link
+                href={ROUTES.REVIEWS.DETAIL(review.id)}
+                className="text-sm text-blue-500 transition-colors hover:text-blue-400"
+              >
+                {t("read_more")} →
+              </Link>
             </div>
           </div>
         </div>

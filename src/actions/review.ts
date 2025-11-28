@@ -333,6 +333,55 @@ export async function getAllReviews(page: number = 1, limit: number = 20) {
 }
 
 /**
+ * 리뷰 ID로 리뷰 상세 조회
+ */
+export async function getReviewById(reviewId: string) {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("reviews")
+    .select("*")
+    .eq("id", reviewId)
+    .single();
+
+  if (error) {
+    if (error.code === "PGRST116") {
+      return {
+        success: false,
+        error: "리뷰를 찾을 수 없습니다.",
+        data: null,
+      };
+    }
+
+    return {
+      success: false,
+      error: error.message || "리뷰를 불러오는데 실패했습니다.",
+      data: null,
+    };
+  }
+
+  // user_profiles 정보를 별도로 조회
+  let reviewWithProfile: any = data;
+  if (data) {
+    const { data: profile } = await supabase
+      .from("user_profiles")
+      .select("id, username, display_name, avatar_url")
+      .eq("id", data.user_id)
+      .single();
+
+    reviewWithProfile = {
+      ...data,
+      user_profiles: profile || null,
+    };
+  }
+
+  return {
+    success: true,
+    data: reviewWithProfile,
+  };
+}
+
+/**
  * 사용자의 특정 애니메이션 리뷰 조회
  */
 export async function getUserReview(animeId: number) {
