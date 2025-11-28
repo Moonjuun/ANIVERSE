@@ -3,6 +3,7 @@ import { getMessages } from "next-intl/server";
 import { routing } from "@/i18n/routing";
 import { LoginModal } from "@/components/auth/login-modal";
 import { Header } from "@/components/layouts/Header";
+import { QueryProvider } from "@/providers/QueryProvider";
 
 export async function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
@@ -20,9 +21,11 @@ export default async function LocaleLayout({
 
   return (
     <NextIntlClientProvider messages={messages}>
-      <Header />
-      {children}
-      <LoginModal />
+      <QueryProvider>
+        <Header />
+        {children}
+        <LoginModal />
+      </QueryProvider>
     </NextIntlClientProvider>
   );
 }
