@@ -93,6 +93,13 @@
       "title": "리뷰 목록",
       "subtitle": "모든 사용자의 리뷰를 확인해보세요"
     }
+  },
+  "search": {
+    "title": "검색",
+    "placeholder": "애니메이션 검색...",
+    "search": "검색",
+    "results_for": "검색 결과",
+    "results": "개"
   }
 }
 

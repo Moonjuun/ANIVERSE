@@ -93,6 +93,13 @@
       "title": "レビュー一覧",
       "subtitle": "すべてのユーザーのレビューを確認しましょう"
     }
+  },
+  "search": {
+    "title": "検索",
+    "placeholder": "アニメを検索...",
+    "search": "検索",
+    "results_for": "検索結果",
+    "results": "件"
   }
 }
 

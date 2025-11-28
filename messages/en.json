@@ -93,6 +93,13 @@
       "title": "Reviews",
       "subtitle": "Check out reviews from all users"
     }
+  },
+  "search": {
+    "title": "Search",
+    "placeholder": "Search anime...",
+    "search": "Search",
+    "results_for": "Results for",
+    "results": "results"
   }
 }
 
