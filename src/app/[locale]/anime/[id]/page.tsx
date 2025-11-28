@@ -140,6 +140,7 @@ export default async function AnimeDetailPage({
                 fill
                 className="object-cover"
                 priority
+                sizes="266px"
               />
             </div>
 

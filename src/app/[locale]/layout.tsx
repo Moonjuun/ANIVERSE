@@ -5,6 +5,7 @@ import { LoginModal } from "@/components/auth/login-modal";
 import { Header } from "@/components/layouts/Header";
 import { QueryProvider } from "@/providers/QueryProvider";
 import { ToastContainer } from "@/components/ui/toast";
+import { ErrorBoundary } from "@/components/error-boundary";
 
 export async function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
@@ -22,12 +23,14 @@ export default async function LocaleLayout({
 
   return (
     <NextIntlClientProvider messages={messages}>
-      <QueryProvider>
-        <Header />
-        {children}
-        <LoginModal />
-        <ToastContainer />
-      </QueryProvider>
+      <ErrorBoundary>
+        <QueryProvider>
+          <Header />
+          {children}
+          <LoginModal />
+          <ToastContainer />
+        </QueryProvider>
+      </ErrorBoundary>
     </NextIntlClientProvider>
   );
 }
