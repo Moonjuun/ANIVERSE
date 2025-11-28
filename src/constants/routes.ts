@@ -18,5 +18,6 @@ export const ROUTES = {
     DETAIL: (id: string | number) => `/reviews/${id}`,
   },
   FAVORITES: () => `/favorites`,
+  SEARCH: () => `/search`,
 } as const;
 

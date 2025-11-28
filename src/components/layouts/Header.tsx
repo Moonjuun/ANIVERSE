@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Menu, X, Globe } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
 import { routing } from "@/i18n/routing";
+import { SearchInput } from "@/components/features/SearchInput";
 
 export function Header() {
   const t = useTranslations("header");
@@ -61,6 +62,7 @@ export function Header() {
               {item.label}
             </Link>
           ))}
+          <SearchInput />
         </div>
 
         {/* Right Side Actions */}
