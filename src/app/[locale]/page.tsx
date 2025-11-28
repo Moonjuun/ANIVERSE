@@ -1,5 +1,10 @@
-import { tmdbClient } from '@/lib/tmdb/client';
-import { AnimeGrid } from '@/components/anime/anime-grid';
+import { tmdbClient } from "@/lib/tmdb/client";
+import { AnimeGrid } from "@/components/anime/anime-grid";
+import { routing } from "@/i18n/routing";
+
+export async function generateStaticParams() {
+  return routing.locales.map((locale) => ({ locale }));
+}
 
 interface HomePageProps {
   params: Promise<{ locale: string }>;
@@ -10,12 +15,12 @@ export default async function HomePage({ params }: HomePageProps) {
 
   // 언어 매핑: ko -> ko-KR, en -> en-US, ja -> ja-JP
   const languageMap: Record<string, string> = {
-    ko: 'ko-KR',
-    en: 'en-US',
-    ja: 'ja-JP',
+    ko: "ko-KR",
+    en: "en-US",
+    ja: "ja-JP",
   };
 
-  const language = languageMap[locale] || 'ko-KR';
+  const language = languageMap[locale] || "ko-KR";
 
   // 인기 애니메이션 목록 가져오기
   const [popularAnimes, topRatedAnimes] = await Promise.all([
