@@ -1,0 +1,12 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "retry": "Retry"
+  },
+  "home": {
+    "hero_title": "Welcome to AniVerse",
+    "hero_subtitle": "Anime reviews and recommendations in one place"
+  }
+}
+
