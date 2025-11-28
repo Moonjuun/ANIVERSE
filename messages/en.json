@@ -87,6 +87,12 @@
     "my_favorites": "My Favorites",
     "no_reviews": "You haven't written any reviews yet.",
     "no_favorites": "You haven't favorited any anime yet."
+  },
+  "reviews": {
+    "list": {
+      "title": "Reviews",
+      "subtitle": "Check out reviews from all users"
+    }
   }
 }
 

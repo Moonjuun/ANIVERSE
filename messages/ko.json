@@ -87,6 +87,12 @@
     "my_favorites": "찜한 애니메이션",
     "no_reviews": "작성한 리뷰가 없습니다.",
     "no_favorites": "찜한 애니메이션이 없습니다."
+  },
+  "reviews": {
+    "list": {
+      "title": "리뷰 목록",
+      "subtitle": "모든 사용자의 리뷰를 확인해보세요"
+    }
   }
 }
 
