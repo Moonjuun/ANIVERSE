@@ -1,0 +1,101 @@
+---
+description: AniVerse 디자인 시스템 토큰 (색상, 타이포그래피, 간격, 컴포넌트 스타일) 정의
+globs: src/app/globals.css, tailwind.config.ts, src/components/**/*.tsx
+alwaysApply: true
+---
+
+# AniVerse Design System
+
+아래의 디자인 토큰과 가이드를 준수하여 UI를 구현할 것.
+**Figma MCP가 연결된 경우 Figma 값을 최우선으로 하되, 값이 없거나 모호할 경우 이 가이드를 따른다.**
+
+## 1. 디자인 컨셉 (Concept)
+
+- **Theme:** "Invisible UI, Content First" (넷플릭스, Apple TV+ 스타일)
+- **Mood:** Modern, Dark, Cinematic, Minimalist
+- **Keyword:** `bg-zinc-950`, `Bento Grid`, `Sans-serif`, `No Border`
+
+## 2. 컬러 팔레트 (Color Palette)
+
+Tailwind CSS의 기본 컬러 팔레트를 기반으로 아래 값을 강제한다.
+
+### 🌑 Background (Surface)
+
+- **Main Background:** `bg-zinc-950` (#09090b) - 페이지 전체 배경 (완전 블랙 지양)
+- **Card/Component:** `bg-zinc-900` (#18181b) - 벤토 그리드 카드, 모달, 사이드바
+- **Overlay:** `bg-black/60 backdrop-blur-md` - 모달 백드롭, 헤더 배경
+
+### 🔵 Primary (Brand)
+
+- **Accent:** `text-blue-500` (#3b82f6) - 주요 링크, 강조 텍스트
+- **Action Button:** `bg-blue-600 hover:bg-blue-500 text-white` - CTA 버튼
+
+### ⚪ Text (Typography)
+
+- **Heading:** `text-white` (#ffffff) - 제목, 중요 정보
+- **Body:** `text-zinc-400` (#a1a1aa) - 본문, 설명
+- **Muted:** `text-zinc-600` (#52525b) - 비활성, 부가 정보
+
+### 🚥 Status
+
+- **Rating (Star):** `text-yellow-400` (⭐️)
+- **Error:** `text-rose-500`
+- **Success:** `text-emerald-500`
+
+## 3. 타이포그래피 (Typography)
+
+- **Font Family:**
+  - 국문: `Pretendard Variable`
+  - 영문: `Inter`
+- **Scale:**
+  - `H1`: `text-4xl md:text-5xl font-bold tracking-tight` (Hero Title)
+  - `H2`: `text-2xl md:text-3xl font-semibold` (Section Title)
+  - `H3`: `text-xl font-medium` (Card Title)
+  - `Body`: `text-sm md:text-base font-normal leading-relaxed`
+  - `Caption`: `text-xs text-zinc-500`
+
+## 4. 형태 및 간격 (Shape & Spacing)
+
+- **Radius (둥글기):**
+  - **Cards:** `rounded-xl` (기본값)
+  - **Buttons:** `rounded-lg`
+  - **Tags/Badges:** `rounded-full`
+- **Spacing (간격):**
+  - **Section Gap:** `gap-8` or `gap-12` (섹션 간 여백을 시원하게)
+  - **Grid Gap:** `gap-4` (모바일) -> `gap-6` (데스크탑)
+  - **Card Padding:** `p-4` or `p-6`
+
+## 5. 컴포넌트 스타일 가이드 (Components)
+
+### 🔲 Bento Card (벤토 카드)
+
+- 배경: `bg-zinc-900`
+- 테두리: 없음 (No Border)
+- 호버 효과: `transition-all duration-300 hover:bg-zinc-800 hover:scale-[1.02]`
+- 그림자: 없음 (Flat Design 지향)
+
+### 🖱️ Buttons (버튼)
+
+- **Primary:** `bg-blue-600 text-white hover:bg-blue-500 shadow-lg shadow-blue-900/20`
+- **Secondary:** `bg-white/10 text-white hover:bg-white/20` (Glassmorphism)
+- **Ghost:** `text-zinc-400 hover:text-white`
+
+### 🏷️ Badges & Tags
+
+- 스타일: `bg-zinc-800 text-zinc-300 text-xs px-2.5 py-1 rounded-full`
+- 장르 태그, 연령 등급 등에 사용.
+
+### 🖼️ Images (Posters)
+
+- 비율: `aspect-[2/3]` (포스터 표준 비율)
+- 처리: `object-cover rounded-xl`
+- 스켈레톤: 로딩 중일 때 `bg-zinc-800 animate-pulse`
+
+## 6. 인터랙션 및 효과 (Effects)
+
+- **Transition:** 모든 인터랙션에는 `duration-200` 또는 `duration-300`을 기본으로 적용.
+- **Scrollbar:** `scrollbar-hide` 유틸리티를 사용하여 스크롤바를 숨기고 콘텐츠에 집중시킬 것.
+- **Glass Effect:** 헤더 및 플로팅 UI에는 `backdrop-blur-md`를 적극 활용할 것.---
+  alwaysApply: true
+
+---
