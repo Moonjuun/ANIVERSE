@@ -127,7 +127,7 @@ export default async function AnimeDetailPage({
               )}
 
               {/* Actions */}
-              <AnimeActions />
+              <AnimeActions animeId={Number(id)} />
             </div>
           </div>
         </div>
