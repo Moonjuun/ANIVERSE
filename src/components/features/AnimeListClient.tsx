@@ -4,12 +4,19 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import { AnimeGrid } from "@/components/anime/anime-grid";
 import type { TMDBResponse, TMDBTVShow } from "@/types/tmdb";
 import { useEffect, useRef } from "react";
+import { useSearchParams } from "next/navigation";
+import { useTranslations } from "next-intl";
 
 interface AnimeListClientProps {
   initialData: TMDBResponse<TMDBTVShow>;
   locale: string;
   language: string;
   initialPage: number;
+  filters?: {
+    genre?: string;
+    year?: string;
+    sort?: string;
+  };
 }
 
 export function AnimeListClient({
@@ -17,8 +24,16 @@ export function AnimeListClient({
   locale,
   language,
   initialPage,
+  filters,
 }: AnimeListClientProps) {
+  const t = useTranslations("common");
+  const searchParams = useSearchParams();
   const loadMoreRef = useRef<HTMLDivElement>(null);
+
+  // 필터 파라미터 구성
+  const genre = filters?.genre || searchParams.get("genre") || "";
+  const year = filters?.year || searchParams.get("year") || "";
+  const sort = filters?.sort || searchParams.get("sort") || "popularity.desc";
 
   const {
     data,
@@ -28,14 +43,20 @@ export function AnimeListClient({
     status,
     error,
   } = useInfiniteQuery({
-    queryKey: ["anime-list", locale, language],
+    queryKey: ["anime-list", locale, language, genre, year, sort],
     queryFn: async ({ pageParam }) => {
       try {
         const page = typeof pageParam === "number" ? pageParam : initialPage;
         // API Route를 통해 데이터 가져오기
-        const response = await fetch(
-          `/api/anime?page=${page}&language=${encodeURIComponent(language)}`
-        );
+        const params = new URLSearchParams({
+          page: page.toString(),
+          language,
+        });
+        if (genre) params.set("genre", genre);
+        if (year) params.set("year", year);
+        if (sort) params.set("sort", sort);
+
+        const response = await fetch(`/api/anime?${params.toString()}`);
         if (!response.ok) {
           throw new Error(`API error: ${response.status} ${response.statusText}`);
         }
@@ -87,7 +108,7 @@ export function AnimeListClient({
   if (status === "error") {
     return (
       <div className="rounded-xl bg-zinc-900 p-8 text-center">
-        <p className="text-zinc-400">애니메이션 목록을 불러오는데 실패했습니다.</p>
+        <p className="text-zinc-400">{t("error")}</p>
         {error && (
           <p className="mt-2 text-sm text-rose-500">
             {error instanceof Error ? error.message : String(error)}
@@ -106,12 +127,12 @@ export function AnimeListClient({
         {isFetchingNextPage && (
           <div className="flex items-center justify-center py-8">
             <div className="h-8 w-8 animate-spin rounded-full border-4 border-zinc-800 border-t-blue-500" />
-            <span className="ml-3 text-zinc-400">로딩 중...</span>
+            <span className="ml-3 text-zinc-400">{t("loading")}...</span>
           </div>
         )}
         {!hasNextPage && allAnimes.length > 0 && (
           <div className="py-8 text-center text-zinc-400">
-            모든 애니메이션을 불러왔습니다.
+            {t("all_loaded")}
           </div>
         )}
       </div>
