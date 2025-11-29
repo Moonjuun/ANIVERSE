@@ -176,6 +176,45 @@
       }
     }
   },
+  "auth": {
+    "signup": {
+      "title": "Start Your Journey",
+      "subtitle": "Start building your ultimate anime deck",
+      "subtitle_en": "Start building your ultimate anime deck",
+      "continue_with_google": "Continue with Google",
+      "continue_with_kakao": "Continue with Kakao",
+      "continue_with_discord": "Continue with Discord",
+      "or": "OR",
+      "email_signup": "Sign up with Email",
+      "login": "Login",
+      "terms_required": "(Required) I agree to the Terms of Service and Privacy Policy",
+      "marketing_optional": "(Optional) I agree to receive marketing notifications",
+      "terms_link": "Terms of Service",
+      "privacy_link": "Privacy Policy"
+    },
+    "profile_setup": {
+      "title": "Almost there!",
+      "subtitle": "Almost there!",
+      "nickname": "Nickname",
+      "nickname_placeholder": "Enter your nickname",
+      "generate_random": "Generate Random",
+      "avatar": "Avatar",
+      "locale": "Region",
+      "locale_auto": "Auto-detected",
+      "start": "Start AniVerse",
+      "submitting": "Setting up...",
+      "error": "Failed to set up profile."
+    },
+    "onboarding": {
+      "title": "Pick 3 of your favorite anime!",
+      "subtitle": "We'll provide recommendations based on your selections",
+      "select_3": "Please select 3",
+      "selected": "selected",
+      "complete": "Complete",
+      "loading": "Setting up...",
+      "error": "Failed to complete onboarding."
+    }
+  },
   "privacy": {
     "title": "Privacy Policy",
     "last_updated": "Last Updated",
@@ -228,4 +267,3 @@
     }
   }
 }
-

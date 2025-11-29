@@ -176,6 +176,45 @@
       }
     }
   },
+  "auth": {
+    "signup": {
+      "title": "나만의 덱 만들기",
+      "subtitle": "나만의 애니메이션 컬렉션을 완성하세요",
+      "subtitle_en": "Start building your ultimate anime deck",
+      "continue_with_google": "Google로 계속하기",
+      "continue_with_kakao": "Kakao로 계속하기",
+      "continue_with_discord": "Discord로 계속하기",
+      "or": "OR",
+      "email_signup": "이메일로 가입하기",
+      "login": "로그인",
+      "terms_required": "(필수) 이용약관 및 개인정보 처리방침 동의",
+      "marketing_optional": "(선택) 마케팅 정보 수신 동의 (알림)",
+      "terms_link": "이용약관",
+      "privacy_link": "개인정보 처리방침"
+    },
+    "profile_setup": {
+      "title": "거의 다 왔어요!",
+      "subtitle": "Almost there!",
+      "nickname": "닉네임",
+      "nickname_placeholder": "닉네임을 입력하세요",
+      "generate_random": "랜덤 생성",
+      "avatar": "아바타",
+      "locale": "지역",
+      "locale_auto": "자동 감지",
+      "start": "AniVerse 시작하기",
+      "submitting": "설정 중...",
+      "error": "프로필 설정에 실패했습니다."
+    },
+    "onboarding": {
+      "title": "인생 애니 3개만 골라주세요!",
+      "subtitle": "선택한 애니메이션을 기반으로 추천을 제공합니다",
+      "select_3": "3개를 선택해주세요",
+      "selected": "개 선택됨",
+      "complete": "완료",
+      "loading": "설정 중...",
+      "error": "온보딩 설정에 실패했습니다."
+    }
+  },
   "privacy": {
     "title": "개인정보처리방침",
     "last_updated": "최종 수정일",

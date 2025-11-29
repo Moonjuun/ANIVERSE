@@ -24,8 +24,8 @@ export default async function PrivacyPage({ params }: PrivacyPageProps) {
           {locale === "ko"
             ? "2025년 1월 1일"
             : locale === "ja"
-              ? "2025年1月1日"
-              : "January 1, 2025"}
+            ? "2025年1月1日"
+            : "January 1, 2025"}
         </p>
       </div>
 
@@ -136,4 +136,3 @@ export default async function PrivacyPage({ params }: PrivacyPageProps) {
     </main>
   );
 }
-

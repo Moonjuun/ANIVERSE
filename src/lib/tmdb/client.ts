@@ -251,3 +251,37 @@ class TMDBClient {
 
 // 싱글톤 인스턴스
 export const tmdbClient = new TMDBClient();
+
+/**
+ * 온보딩용 애니메이션 데이터 가져오기
+ */
+export async function getOnboardingAnime(
+  language: string = "ko-KR"
+): Promise<TMDBTVShow[]> {
+  const { ONBOARDING_ANIME_IDS } = await import("@/constants/onboarding-anime");
+
+  // 각 애니메이션의 상세 정보 가져오기
+  const animeDetails = await Promise.all(
+    ONBOARDING_ANIME_IDS.map((id) =>
+      tmdbClient.getTVDetail(id, language).catch(() => null)
+    )
+  );
+
+  // null 제거 및 타입 변환
+  return animeDetails
+    .filter((detail): detail is TMDBTVDetail => detail !== null)
+    .map((detail) => ({
+      id: detail.id,
+      name: detail.name,
+      original_name: detail.original_name,
+      overview: detail.overview,
+      poster_path: detail.poster_path,
+      backdrop_path: detail.backdrop_path,
+      first_air_date: detail.first_air_date,
+      vote_average: detail.vote_average,
+      vote_count: detail.vote_count,
+      popularity: detail.popularity,
+      genre_ids: detail.genres?.map((g) => g.id) || [],
+      origin_country: detail.origin_country || [],
+    }));
+}

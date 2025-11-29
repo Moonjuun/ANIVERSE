@@ -176,6 +176,45 @@
       }
     }
   },
+  "auth": {
+    "signup": {
+      "title": "あなたのデッキを作る",
+      "subtitle": "究極のアニメデッキを作り始めましょう",
+      "subtitle_en": "Start building your ultimate anime deck",
+      "continue_with_google": "Googleで続ける",
+      "continue_with_kakao": "Kakaoで続ける",
+      "continue_with_discord": "Discordで続ける",
+      "or": "または",
+      "email_signup": "メールで登録",
+      "login": "ログイン",
+      "terms_required": "（必須）利用規約および個人情報処理方針に同意",
+      "marketing_optional": "（任意）マーケティング情報の受信に同意（通知）",
+      "terms_link": "利用規約",
+      "privacy_link": "個人情報処理方針"
+    },
+    "profile_setup": {
+      "title": "もう少しです！",
+      "subtitle": "Almost there!",
+      "nickname": "ニックネーム",
+      "nickname_placeholder": "ニックネームを入力",
+      "generate_random": "ランダム生成",
+      "avatar": "アバター",
+      "locale": "地域",
+      "locale_auto": "自動検出",
+      "start": "AniVerseを始める",
+      "submitting": "設定中...",
+      "error": "プロフィール設定に失敗しました。"
+    },
+    "onboarding": {
+      "title": "お気に入りのアニメを3つ選んでください！",
+      "subtitle": "選択したアニメに基づいておすすめを提供します",
+      "select_3": "3つ選択してください",
+      "selected": "個選択済み",
+      "complete": "完了",
+      "loading": "設定中...",
+      "error": "オンボーディングの完了に失敗しました。"
+    }
+  },
   "privacy": {
     "title": "個人情報処理方針",
     "last_updated": "最終更新日",
@@ -228,4 +267,3 @@
     }
   }
 }
-
