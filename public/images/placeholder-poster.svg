@@ -1,0 +1,22 @@
+<svg width="500" height="750" viewBox="0 0 500 750" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="500" height="750" fill="#18181b"/>
+  <!-- Film Strip Icon -->
+  <g opacity="0.4" transform="translate(250, 300)">
+    <!-- Film Strip Holes -->
+    <rect x="-180" y="-60" width="20" height="20" rx="2" fill="#3b82f6"/>
+    <rect x="-180" y="-20" width="20" height="20" rx="2" fill="#3b82f6"/>
+    <rect x="-180" y="20" width="20" height="20" rx="2" fill="#3b82f6"/>
+    <rect x="-180" y="60" width="20" height="20" rx="2" fill="#3b82f6"/>
+    <rect x="160" y="-60" width="20" height="20" rx="2" fill="#3b82f6"/>
+    <rect x="160" y="-20" width="20" height="20" rx="2" fill="#3b82f6"/>
+    <rect x="160" y="20" width="20" height="20" rx="2" fill="#3b82f6"/>
+    <rect x="160" y="60" width="20" height="20" rx="2" fill="#3b82f6"/>
+    <!-- Film Frame -->
+    <rect x="-150" y="-50" width="300" height="100" rx="4" fill="none" stroke="#3b82f6" stroke-width="3"/>
+    <!-- Play Icon -->
+    <path d="M-20 -15L-20 15L20 0Z" fill="#3b82f6"/>
+  </g>
+  <!-- Text -->
+  <text x="250" y="550" font-family="system-ui, -apple-system, sans-serif" font-size="20" font-weight="500" fill="#52525b" text-anchor="middle">No Image</text>
+</svg>
+

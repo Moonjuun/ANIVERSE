@@ -229,7 +229,7 @@ class TMDBClient {
     size: "w500" | "w780" | "original" = "w500"
   ): string {
     if (!path) {
-      return "/images/placeholder-poster.png"; // 플레이스홀더 이미지
+      return "/images/placeholder-poster.svg"; // 플레이스홀더 이미지
     }
     return `${TMDB_IMAGE_BASE_URL}/${size}${path}`;
   }
