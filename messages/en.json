@@ -48,6 +48,10 @@
       "status": "Status",
       "production": "Production Companies",
       "write_review": "Write Review",
+      "share": "Share",
+      "share_copied": "Link copied to clipboard.",
+      "share_error": "Failed to share.",
+      "add_to_collection": "Add to Collection",
       "add_to_favorites": "Add to Favorites",
       "reviews": "Reviews",
       "external_reviews": "External Reviews ({count})",
@@ -94,8 +98,8 @@
     }
   },
   "favorite": {
-    "add": "Add to Favorites",
-    "remove": "Remove from Favorites",
+    "add": "Favorites",
+    "remove": "Remove",
     "loading": "Loading...",
     "add_error": "Failed to add to favorites.",
     "remove_error": "Failed to remove from favorites.",

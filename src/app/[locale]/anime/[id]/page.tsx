@@ -186,14 +186,14 @@ export default async function AnimeDetailPage({
               className="object-cover"
               priority
             />
-            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-zinc-950/80 to-zinc-950" />
+            <div className="absolute inset-0 bg-linear-to-b from-transparent via-zinc-950/80 to-zinc-950" />
           </div>
         )}
 
         <div className="relative z-10 mx-auto flex h-full max-w-7xl items-end px-4 pb-12 md:px-6 lg:px-8">
           <div className="flex w-full flex-col gap-6 md:flex-row md:items-end">
             {/* Poster */}
-            <div className="relative h-[400px] w-[266px] flex-shrink-0 overflow-hidden rounded-xl shadow-2xl">
+            <div className="relative h-[400px] w-[266px] shrink-0 overflow-hidden rounded-xl shadow-2xl">
               <Image
                 src={posterUrl}
                 alt={anime.name}
@@ -257,7 +257,7 @@ export default async function AnimeDetailPage({
               )}
 
               {/* Actions */}
-              <AnimeActions animeId={Number(id)} />
+              <AnimeActions animeId={Number(id)} animeName={anime.name} />
             </div>
           </div>
         </div>

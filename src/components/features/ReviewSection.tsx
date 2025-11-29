@@ -6,6 +6,7 @@ import { ReviewForm } from "./ReviewForm";
 import { ReviewTabs } from "./ReviewTabs";
 import { Button } from "@/components/ui/button";
 import { AuthGuard } from "@/components/auth/auth-guard";
+import { useModalStore } from "@/stores/useModalStore";
 import { useTranslations } from "next-intl";
 import type { Database } from "@/types/supabase";
 import type { TMDBReview } from "@/types/tmdb";
@@ -30,6 +31,7 @@ export function ReviewSection({
 }: ReviewSectionProps) {
   const t = useTranslations("review");
   const tDetail = useTranslations("anime.detail");
+  const { setLoginModalOpen } = useModalStore();
   const [showForm, setShowForm] = useState(false);
   const [existingReview, setExistingReview] = useState<Review | null>(null);
   const [loading, setLoading] = useState(true);
@@ -37,6 +39,20 @@ export function ReviewSection({
   useEffect(() => {
     loadUserReview();
   }, [animeId]);
+
+  // 외부에서 리뷰 작성 요청이 오면 폼 열기
+  useEffect(() => {
+    const handleRequest = () => {
+      if (!existingReview && !showForm) {
+        setShowForm(true);
+      }
+    };
+    // 이벤트 리스너 등록 (AnimeActions에서 호출)
+    window.addEventListener("writeReviewRequest", handleRequest);
+    return () => {
+      window.removeEventListener("writeReviewRequest", handleRequest);
+    };
+  }, [existingReview, showForm]);
 
   const loadUserReview = async () => {
     setLoading(true);
@@ -74,9 +90,9 @@ export function ReviewSection({
   }
 
   return (
-    <div className="space-y-6">
+    <div id="reviews-section" className="space-y-6">
       {/* 리뷰 작성/수정 폼 */}
-      {showForm ? (
+      {showForm && (
         <div className="rounded-xl bg-zinc-900 p-6">
           <h3 className="mb-4 text-lg font-semibold text-white md:text-xl">
             {existingReview ? tDetail("edit_review") : t("submit")}
@@ -93,37 +109,33 @@ export function ReviewSection({
             }}
           />
         </div>
-      ) : (
-        <AuthGuard
-          fallback={
-            <div className="rounded-xl bg-zinc-900 p-6 text-center">
-              <p className="mb-4 text-zinc-400">{t("no_reviews_yet")}</p>
-              <Button onClick={() => setShowForm(true)}>
-                {tDetail("write_review")}
-              </Button>
-            </div>
-          }
-        >
-          {!existingReview && (
-            <div className="rounded-xl bg-zinc-900 p-6">
-              <div className="flex items-center justify-between">
-                <h3 className="text-lg font-semibold text-white md:text-xl">
-                  {tDetail("write_review")}
-                </h3>
-                <Button onClick={() => setShowForm(true)}>
-                  {tDetail("write_review")}
-                </Button>
-              </div>
-            </div>
-          )}
-        </AuthGuard>
       )}
 
       {/* 리뷰 탭 (외부 리뷰 / 내부 리뷰) */}
       <div>
-        <h2 className="mb-6 text-2xl font-semibold text-white md:text-3xl">
-          {tDetail("reviews")}
-        </h2>
+        <div className="mb-6 flex items-center justify-between">
+          <h2 className="text-2xl font-semibold text-white md:text-3xl">
+            {tDetail("reviews")}
+          </h2>
+          {!showForm && (
+            <AuthGuard
+              fallback={
+                <Button
+                  variant="secondary"
+                  onClick={() => setLoginModalOpen(true)}
+                >
+                  {tDetail("write_review")}
+                </Button>
+              }
+            >
+              {!existingReview && (
+                <Button variant="secondary" onClick={() => setShowForm(true)}>
+                  {tDetail("write_review")}
+                </Button>
+              )}
+            </AuthGuard>
+          )}
+        </div>
         <ReviewTabs
           animeId={animeId}
           tmdbReviews={tmdbReviews}
