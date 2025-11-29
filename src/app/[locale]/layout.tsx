@@ -7,6 +7,7 @@ import { OnboardingModal } from "@/components/auth/onboarding-modal";
 import { EmailVerificationModalWrapper } from "@/components/auth/email-verification-modal-wrapper";
 import { LogoutConfirmModal } from "@/components/auth/logout-confirm-modal";
 import { DeleteAccountConfirmModal } from "@/components/auth/delete-account-confirm-modal";
+import { DeleteReviewConfirmModal } from "@/components/features/DeleteReviewConfirmModal";
 import { Header } from "@/components/layouts/Header";
 import { QueryProvider } from "@/providers/QueryProvider";
 import { ToastContainer } from "@/components/ui/toast";
@@ -52,6 +53,7 @@ export default async function LocaleLayout({
           <EmailVerificationModalWrapper />
           <LogoutConfirmModal />
           <DeleteAccountConfirmModal />
+          <DeleteReviewConfirmModal />
           <ToastContainer />
         </QueryProvider>
       </ErrorBoundary>

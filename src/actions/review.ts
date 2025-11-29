@@ -234,6 +234,7 @@ export async function deleteReview(reviewId: string) {
 
   // 경로 재검증
   revalidatePath(`/anime/${existingReview.anime_id}`);
+  revalidatePath("/profile");
 
   return {
     success: true,
@@ -312,9 +313,7 @@ export async function getAllReviews(page: number = 1, limit: number = 20) {
       .in("id", userIds);
 
     // 리뷰에 프로필 정보 병합
-    const profileMap = new Map(
-      (profiles || []).map((p) => [p.id, p])
-    );
+    const profileMap = new Map((profiles || []).map((p) => [p.id, p]));
     reviewsWithProfiles = data.map((review) => ({
       ...review,
       user_profiles: profileMap.get(review.user_id) || null,
@@ -429,4 +428,3 @@ export async function getUserReview(animeId: number) {
     data,
   };
 }
-

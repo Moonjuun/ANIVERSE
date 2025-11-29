@@ -5,6 +5,7 @@ import { ProfileForm } from "@/components/features/ProfileForm";
 import { ReviewList } from "@/components/features/ReviewList";
 import { AnimeGrid } from "@/components/anime/anime-grid";
 import { DeleteAccountButton } from "@/components/features/DeleteAccountButton";
+import { ProfileReviewCard } from "@/components/features/ProfileReviewCard";
 import { tmdbClient } from "@/lib/tmdb/client";
 import { routing } from "@/i18n/routing";
 import { notFound, redirect } from "next/navigation";
@@ -64,9 +65,7 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
   const animePromises = favorites
     .slice(0, 12)
     .map((favorite) =>
-      tmdbClient
-        .getTVDetail(favorite.anime_id, language)
-        .catch(() => null)
+      tmdbClient.getTVDetail(favorite.anime_id, language).catch(() => null)
     );
 
   const animeResults = await Promise.all(animePromises);
@@ -74,16 +73,37 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
     (anime): anime is NonNullable<typeof anime> => anime !== null
   );
 
+  // 리뷰한 애니메이션 상세 정보 가져오기
+  const reviewAnimeIds = [...new Set(reviews.map((review) => review.anime_id))];
+  const reviewAnimePromises = reviewAnimeIds
+    .slice(0, 10)
+    .map((animeId) =>
+      tmdbClient.getTVDetail(animeId, language).catch(() => null)
+    );
+
+  const reviewAnimeResults = await Promise.all(reviewAnimePromises);
+  const reviewAnimes = reviewAnimeResults.filter(
+    (anime): anime is NonNullable<typeof anime> => anime !== null
+  );
+
+  // 리뷰와 애니메이션 정보 매핑
+  const reviewAnimeMap = new Map(
+    reviewAnimes.map((anime) => [anime.id, anime])
+  );
+
   const displayName =
-    profile.display_name || profile.username || user.email?.split("@")[0] || "User";
+    profile.display_name ||
+    profile.username ||
+    user.email?.split("@")[0] ||
+    "User";
 
   // 아바타 이모지 추출 (emoji: 형식인 경우)
   const getAvatarEmoji = (avatarUrl: string | null): string | null => {
-    if (!avatarUrl || !avatarUrl.startsWith('emoji:')) {
+    if (!avatarUrl || !avatarUrl.startsWith("emoji:")) {
       return null;
     }
-    const avatarId = avatarUrl.replace('emoji:', '');
-    const avatar = AVATARS.find(a => a.id === avatarId);
+    const avatarId = avatarUrl.replace("emoji:", "");
+    const avatar = AVATARS.find((a) => a.id === avatarId);
     return avatar ? avatar.emoji : null;
   };
 
@@ -170,28 +190,16 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
             </h2>
             {reviews.length > 0 ? (
               <div className="space-y-4">
-                {reviews.slice(0, 5).map((review) => (
-                  <div
-                    key={review.id}
-                    className="rounded-xl bg-zinc-900 p-6"
-                  >
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <h3 className="font-semibold text-white">
-                          {review.title || "제목 없음"}
-                        </h3>
-                        <p className="mt-2 text-sm text-zinc-400 line-clamp-2">
-                          {review.content}
-                        </p>
-                        <p className="mt-2 text-xs text-zinc-500">
-                          {new Date(review.created_at).toLocaleDateString(
-                            "ko-KR"
-                          )}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                ))}
+                {reviews.slice(0, 5).map((review) => {
+                  const anime = reviewAnimeMap.get(review.anime_id);
+                  return (
+                    <ProfileReviewCard
+                      key={review.id}
+                      review={review}
+                      anime={anime || null}
+                    />
+                  );
+                })}
               </div>
             ) : (
               <div className="rounded-xl bg-zinc-900 p-8 text-center">
@@ -218,8 +226,3 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
     </main>
   );
 }
-
-
-
-
-

@@ -15,6 +15,10 @@ interface ModalState {
   setLogoutConfirmModalOpen: (open: boolean) => void;
   deleteAccountConfirmModalOpen: boolean;
   setDeleteAccountConfirmModalOpen: (open: boolean) => void;
+  deleteReviewConfirmModalOpen: boolean;
+  setDeleteReviewConfirmModalOpen: (open: boolean) => void;
+  deleteReviewId: string | null;
+  setDeleteReviewId: (id: string | null) => void;
 }
 
 export const useModalStore = create<ModalState>((set) => ({
@@ -34,4 +38,9 @@ export const useModalStore = create<ModalState>((set) => ({
   deleteAccountConfirmModalOpen: false,
   setDeleteAccountConfirmModalOpen: (open) =>
     set({ deleteAccountConfirmModalOpen: open }),
+  deleteReviewConfirmModalOpen: false,
+  setDeleteReviewConfirmModalOpen: (open) =>
+    set({ deleteReviewConfirmModalOpen: open }),
+  deleteReviewId: null,
+  setDeleteReviewId: (id) => set({ deleteReviewId: id }),
 }));

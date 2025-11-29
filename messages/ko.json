@@ -73,6 +73,8 @@
     "delete_error": "리뷰 삭제에 실패했습니다.",
     "unexpected_error": "예상치 못한 오류가 발생했습니다.",
     "delete_confirm": "정말 이 리뷰를 삭제하시겠습니까?",
+    "delete_review": "리뷰 삭제",
+    "delete_success": "리뷰가 삭제되었습니다.",
     "by": "작성자",
     "on": "작성일",
     "no_reviews_yet": "아직 리뷰가 없습니다. 첫 번째 리뷰를 작성해보세요!",
