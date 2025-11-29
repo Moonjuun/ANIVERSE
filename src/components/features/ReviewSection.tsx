@@ -3,19 +3,31 @@
 import { useState, useEffect } from "react";
 import { getUserReview } from "@/actions/review";
 import { ReviewForm } from "./ReviewForm";
-import { ReviewList } from "./ReviewList";
+import { ReviewTabs } from "./ReviewTabs";
 import { Button } from "@/components/ui/button";
 import { AuthGuard } from "@/components/auth/auth-guard";
 import { useTranslations } from "next-intl";
 import type { Database } from "@/types/supabase";
+import type { TMDBReview } from "@/types/tmdb";
+import type { AniListReview } from "@/lib/anilist/client";
 
 type Review = Database["public"]["Tables"]["reviews"]["Row"];
 
 interface ReviewSectionProps {
   animeId: number;
+  tmdbReviews?: TMDBReview[];
+  anilistReviews?: AniListReview[];
+  anilistMediaId?: number | null;
+  locale?: string;
 }
 
-export function ReviewSection({ animeId }: ReviewSectionProps) {
+export function ReviewSection({
+  animeId,
+  tmdbReviews = [],
+  anilistReviews = [],
+  anilistMediaId = null,
+  locale = "ko",
+}: ReviewSectionProps) {
   const t = useTranslations("review");
   const tDetail = useTranslations("anime.detail");
   const [showForm, setShowForm] = useState(false);
@@ -66,7 +78,7 @@ export function ReviewSection({ animeId }: ReviewSectionProps) {
       {/* 리뷰 작성/수정 폼 */}
       {showForm ? (
         <div className="rounded-xl bg-zinc-900 p-6">
-          <h3 className="mb-4 text-xl font-semibold text-white">
+          <h3 className="mb-4 text-lg font-semibold text-white md:text-xl">
             {existingReview ? tDetail("edit_review") : t("submit")}
           </h3>
           <ReviewForm
@@ -85,9 +97,7 @@ export function ReviewSection({ animeId }: ReviewSectionProps) {
         <AuthGuard
           fallback={
             <div className="rounded-xl bg-zinc-900 p-6 text-center">
-              <p className="mb-4 text-zinc-400">
-                {t("no_reviews_yet")}
-              </p>
+              <p className="mb-4 text-zinc-400">{t("no_reviews_yet")}</p>
               <Button onClick={() => setShowForm(true)}>
                 {tDetail("write_review")}
               </Button>
@@ -97,7 +107,7 @@ export function ReviewSection({ animeId }: ReviewSectionProps) {
           {!existingReview && (
             <div className="rounded-xl bg-zinc-900 p-6">
               <div className="flex items-center justify-between">
-                <h3 className="text-xl font-semibold text-white">
+                <h3 className="text-lg font-semibold text-white md:text-xl">
                   {tDetail("write_review")}
                 </h3>
                 <Button onClick={() => setShowForm(true)}>
@@ -109,14 +119,21 @@ export function ReviewSection({ animeId }: ReviewSectionProps) {
         </AuthGuard>
       )}
 
-      {/* 리뷰 목록 */}
+      {/* 리뷰 탭 (외부 리뷰 / 내부 리뷰) */}
       <div>
-        <h2 className="mb-4 text-2xl font-semibold text-white">
+        <h2 className="mb-6 text-2xl font-semibold text-white md:text-3xl">
           {tDetail("reviews")}
         </h2>
-        <ReviewList animeId={animeId} onEdit={handleEdit} refreshKey={refreshKey} />
+        <ReviewTabs
+          animeId={animeId}
+          tmdbReviews={tmdbReviews}
+          anilistReviews={anilistReviews}
+          anilistMediaId={anilistMediaId}
+          locale={locale}
+          onEdit={handleEdit}
+          refreshKey={refreshKey}
+        />
       </div>
     </div>
   );
 }
-

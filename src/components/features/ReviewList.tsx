@@ -3,13 +3,14 @@
 import { useState, useEffect, useCallback } from "react";
 import { getReviews, deleteReview } from "@/actions/review";
 import { Button } from "@/components/ui/button";
-import { Star, Trash2, Edit2 } from "lucide-react";
+import { Star, Trash2, Edit2, ChevronDown, ChevronUp } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useToast } from "@/lib/utils/toast";
 import { useAuthStore } from "@/stores/useAuthStore";
 import Image from "next/image";
 import type { Database } from "@/types/supabase";
 import { getAvatarEmoji } from "@/lib/utils/avatar";
+import { ReviewCardContent } from "./ReviewCardContent";
 
 type Review = Database["public"]["Tables"]["reviews"]["Row"] & {
   user_profiles: {
@@ -26,6 +27,8 @@ interface ReviewListProps {
   refreshKey?: number; // refresh를 위한 key
 }
 
+const INITIAL_DISPLAY_COUNT = 5;
+
 export function ReviewList({ animeId, onEdit, refreshKey }: ReviewListProps) {
   const t = useTranslations("review");
   const toast = useToast();
@@ -33,6 +36,7 @@ export function ReviewList({ animeId, onEdit, refreshKey }: ReviewListProps) {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [displayCount, setDisplayCount] = useState(INITIAL_DISPLAY_COUNT);
 
   const loadReviews = useCallback(async () => {
     setLoading(true);
@@ -88,9 +92,12 @@ export function ReviewList({ animeId, onEdit, refreshKey }: ReviewListProps) {
     );
   }
 
+  const displayedReviews = reviews.slice(0, displayCount);
+  const hasMore = reviews.length > displayCount;
+
   return (
     <div className="space-y-4">
-      {reviews.map((review) => {
+      {displayedReviews.map((review) => {
         const isOwner = user?.id === review.user_id;
         const displayName =
           review.user_profiles?.display_name ||
@@ -107,7 +114,9 @@ export function ReviewList({ animeId, onEdit, refreshKey }: ReviewListProps) {
               <div className="flex items-center gap-3">
                 {review.user_profiles?.avatar_url ? (
                   (() => {
-                    const avatarEmoji = getAvatarEmoji(review.user_profiles.avatar_url);
+                    const avatarEmoji = getAvatarEmoji(
+                      review.user_profiles.avatar_url
+                    );
                     return avatarEmoji ? (
                       <div className="flex h-10 w-10 items-center justify-center rounded-full bg-zinc-800 text-2xl">
                         {avatarEmoji}
@@ -128,7 +137,9 @@ export function ReviewList({ animeId, onEdit, refreshKey }: ReviewListProps) {
                   </div>
                 )}
                 <div>
-                  <p className="font-medium text-white">{displayName}</p>
+                  <p className="text-sm font-medium text-white md:text-base">
+                    {displayName}
+                  </p>
                   <p className="text-xs text-zinc-500">
                     {new Date(review.created_at).toLocaleDateString("ko-KR", {
                       year: "numeric",
@@ -143,7 +154,7 @@ export function ReviewList({ animeId, onEdit, refreshKey }: ReviewListProps) {
               <div className="flex items-center gap-3">
                 <div className="flex items-center gap-1">
                   <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                  <span className="text-sm font-medium text-white">
+                  <span className="text-xs font-medium text-white md:text-sm">
                     {review.rating}/10
                   </span>
                 </div>
@@ -175,15 +186,13 @@ export function ReviewList({ animeId, onEdit, refreshKey }: ReviewListProps) {
 
             {/* 제목 */}
             {review.title && (
-              <h4 className="mb-2 text-lg font-semibold text-white">
+              <h4 className="mb-2 text-base font-semibold text-white md:text-lg">
                 {review.title}
               </h4>
             )}
 
             {/* 내용 */}
-            <p className="whitespace-pre-wrap text-zinc-300">
-              {review.content}
-            </p>
+            <ReviewCardContent content={review.content} />
 
             {/* 수정일 표시 */}
             {review.updated_at !== review.created_at && (
@@ -199,6 +208,19 @@ export function ReviewList({ animeId, onEdit, refreshKey }: ReviewListProps) {
           </div>
         );
       })}
+
+      {/* 더 보기 버튼 */}
+      {hasMore && (
+        <div className="flex justify-center pt-4">
+          <Button
+            variant="secondary"
+            onClick={() => setDisplayCount((prev) => prev + 5)}
+            className="text-sm"
+          >
+            {t("load_more_reviews")} ({reviews.length - displayCount}개 더)
+          </Button>
+        </div>
+      )}
     </div>
   );
 }

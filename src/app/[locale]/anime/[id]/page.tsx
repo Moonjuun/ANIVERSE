@@ -3,13 +3,17 @@ import { notFound } from "next/navigation";
 import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 import { tmdbClient } from "@/lib/tmdb/client";
+import { anilistClient } from "@/lib/anilist/client";
 import { Badge } from "@/components/ui/badge";
 import { Star, Calendar, Tv, Users } from "lucide-react";
 import { ReviewSection } from "@/components/features/ReviewSection";
 import { AnimeActions } from "@/components/features/AnimeActions";
 import { StructuredData } from "@/components/features/StructuredData";
 import { WatchProviders } from "@/components/features/WatchProviders";
-import { translateStatus, getStatusDescription } from "@/lib/utils/anime-status";
+import {
+  translateStatus,
+  getStatusDescription,
+} from "@/lib/utils/anime-status";
 import { formatDate } from "@/lib/utils/date-format";
 import type { TMDBTVDetail } from "@/types/tmdb";
 
@@ -40,7 +44,11 @@ export async function generateMetadata({
       anime.overview || `${anime.name}에 대한 정보와 리뷰를 확인해보세요.`;
     const posterUrl = tmdbClient.getPosterURL(anime.poster_path);
     const genres = anime.genres.map((g) => g.name).join(", ");
-    const ogImageUrl = `/api/og?title=${encodeURIComponent(anime.name)}&rating=${anime.vote_average.toFixed(1)}&poster=${encodeURIComponent(posterUrl)}`;
+    const ogImageUrl = `/api/og?title=${encodeURIComponent(
+      anime.name
+    )}&rating=${anime.vote_average.toFixed(1)}&poster=${encodeURIComponent(
+      posterUrl
+    )}`;
 
     return {
       title,
@@ -105,11 +113,40 @@ export default async function AnimeDetailPage({
   // 애니메이션 상세 정보 가져오기
   let anime: TMDBTVDetail;
   let watchProviders;
+  let tmdbReviews;
+  let anilistReviews = [];
+  let anilistMediaId: number | null = null;
+
   try {
-    [anime, watchProviders] = await Promise.all([
+    [anime, watchProviders, tmdbReviews] = await Promise.all([
       tmdbClient.getTVDetail(Number(id), language),
       tmdbClient.getTVWatchProviders(Number(id), language).catch(() => null),
+      tmdbClient.getTVReviews(Number(id), 1, language),
     ]);
+
+    // AniList 리뷰 가져오기 (비동기, 실패해도 계속 진행)
+    try {
+      anilistMediaId = await anilistClient.findMediaByTitle(
+        anime.name,
+        anime.original_name
+      );
+
+      if (anilistMediaId) {
+        anilistReviews = await anilistClient
+          .getReviews(anilistMediaId, 1, 10)
+          .catch(() => []);
+
+        if (process.env.NODE_ENV === "development") {
+          console.log("AniList Reviews:", {
+            mediaId: anilistMediaId,
+            reviewsCount: anilistReviews.length,
+          });
+        }
+      }
+    } catch (anilistError) {
+      console.warn("AniList API Error:", anilistError);
+      // AniList 에러는 무시하고 계속 진행
+    }
   } catch (error) {
     console.error("TMDB API Error:", error);
     notFound();
@@ -118,6 +155,17 @@ export default async function AnimeDetailPage({
   const posterUrl = tmdbClient.getPosterURL(anime.poster_path);
   const backdropUrl = tmdbClient.getBackdropURL(anime.backdrop_path);
   const rating = anime.vote_average.toFixed(1);
+
+  // TMDB 리뷰 데이터 확인 및 로깅
+  const tmdbReviewsList = tmdbReviews?.results || [];
+  if (process.env.NODE_ENV === "development") {
+    console.log("TMDB Reviews:", {
+      hasReviews: !!tmdbReviews,
+      totalResults: tmdbReviews?.total_results || 0,
+      reviewsCount: tmdbReviewsList.length,
+      firstReview: tmdbReviewsList[0]?.author || "none",
+    });
+  }
 
   // OTT 서비스 정보 추출 (한국 우선, 없으면 다른 국가)
   const koreaProviders = watchProviders?.results["KR"]?.flatrate || [];
@@ -240,7 +288,13 @@ export default async function AnimeDetailPage({
             )}
 
             {/* Reviews Section */}
-            <ReviewSection animeId={Number(id)} />
+            <ReviewSection
+              animeId={Number(id)}
+              tmdbReviews={tmdbReviewsList}
+              anilistReviews={anilistReviews}
+              anilistMediaId={anilistMediaId}
+              locale={locale}
+            />
           </div>
 
           {/* Sidebar */}
@@ -252,7 +306,10 @@ export default async function AnimeDetailPage({
                 locale={locale}
                 animeId={Number(id)}
                 animeName={anime.name}
-                link={watchProviders?.results["KR"]?.link || watchProviders?.results["US"]?.link}
+                link={
+                  watchProviders?.results["KR"]?.link ||
+                  watchProviders?.results["US"]?.link
+                }
               />
             )}
 
@@ -295,4 +352,3 @@ export default async function AnimeDetailPage({
     </div>
   );
 }
-

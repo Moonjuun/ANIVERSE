@@ -10,6 +10,7 @@ import type {
   TMDBTVDetail,
   TMDBGenre,
   TMDBWatchProviders,
+  TMDBReviewsResponse,
 } from "@/types/tmdb";
 
 const TMDB_BASE_URL = "https://api.themoviedb.org/3";
@@ -61,6 +62,10 @@ class TMDBClient {
 
     if (!response.ok) {
       const errorText = await response.text();
+      // 404는 리뷰가 없는 것으로 처리 (일부 엔드포인트는 404를 반환할 수 있음)
+      if (response.status === 404) {
+        throw new Error("NOT_FOUND");
+      }
       throw new Error(
         `TMDB API error: ${response.status} ${response.statusText} - ${errorText}`
       );
@@ -219,6 +224,41 @@ class TMDBClient {
     return this.fetch<TMDBWatchProviders>(`/tv/${id}/watch/providers`, {
       language,
     });
+  }
+
+  /**
+   * TV 쇼 리뷰 가져오기
+   * Note: TMDB API는 모든 TV 쇼에 리뷰를 제공하지 않습니다.
+   * 리뷰가 없는 경우 빈 results 배열을 반환하거나 null을 반환할 수 있습니다.
+   */
+  async getTVReviews(
+    id: number,
+    page: number = 1,
+    language: string = "ko-KR"
+  ): Promise<TMDBReviewsResponse | null> {
+    try {
+      const response = await this.fetch<TMDBReviewsResponse>(
+        `/tv/${id}/reviews`,
+        {
+          page,
+          language,
+        }
+      );
+
+      // 리뷰가 없는 경우도 정상 응답이므로 그대로 반환
+      // total_results가 0이면 빈 배열이지만 정상 응답
+      return response;
+    } catch (error) {
+      // 404나 다른 에러의 경우 null 반환 (리뷰가 없는 것으로 처리)
+      if (error instanceof Error && error.message === "NOT_FOUND") {
+        return null;
+      }
+      console.warn(
+        `TMDB Reviews API error for TV ${id}:`,
+        error instanceof Error ? error.message : error
+      );
+      return null;
+    }
   }
 
   /**

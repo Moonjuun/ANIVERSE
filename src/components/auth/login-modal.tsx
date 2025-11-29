@@ -195,8 +195,8 @@ export function LoginModal() {
         }
 
         // 이메일 인증이 완료된 경우 (세션이 있는 경우)
-        if (data.user && data.session) {
-          setUser(data.user);
+        if (signUpData.user && signUpData.session) {
+          setUser(signUpData.user);
           setLoginModalOpen(false);
           // 프로필 설정 모달로 이동
           const { setProfileSetupModalOpen } = useModalStore.getState();

@@ -50,6 +50,8 @@
       "write_review": "レビューを書く",
       "add_to_favorites": "お気に入りに追加",
       "reviews": "レビュー",
+      "external_reviews": "外部レビュー ({count})",
+      "no_external_reviews": "外部プラットフォームから取得したレビューはありません。",
       "reviews_coming_soon": "レビュー機能は近日公開予定です。",
       "no_reviews": "レビューはまだありません。",
       "edit_review": "レビューを編集",
@@ -79,6 +81,8 @@
     "on": "作成日",
     "no_reviews_yet": "レビューはまだありません。最初のレビューを書いてみましょう！",
     "read_more": "続きを読む",
+    "show_less": "折りたたむ",
+    "load_more_reviews": "レビューをもっと見る",
     "detail": {
       "untitled_review": "タイトルなしレビュー",
       "edited": "編集済み",
