@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "update-email-template": "node scripts/update-email-template.js",
+    "update-email-template-i18n": "node scripts/update-email-template-i18n.js",
+    "update-smtp-sender": "node scripts/update-smtp-sender.js",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",

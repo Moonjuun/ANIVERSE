@@ -1,4 +1,4 @@
-import { create } from 'zustand';
+import { create } from "zustand";
 
 interface ModalState {
   loginModalOpen: boolean;
@@ -7,6 +7,14 @@ interface ModalState {
   setProfileSetupModalOpen: (open: boolean) => void;
   onboardingModalOpen: boolean;
   setOnboardingModalOpen: (open: boolean) => void;
+  emailVerificationModalOpen: boolean;
+  setEmailVerificationModalOpen: (open: boolean) => void;
+  emailVerificationEmail: string;
+  setEmailVerificationEmail: (email: string) => void;
+  logoutConfirmModalOpen: boolean;
+  setLogoutConfirmModalOpen: (open: boolean) => void;
+  deleteAccountConfirmModalOpen: boolean;
+  setDeleteAccountConfirmModalOpen: (open: boolean) => void;
 }
 
 export const useModalStore = create<ModalState>((set) => ({
@@ -16,5 +24,14 @@ export const useModalStore = create<ModalState>((set) => ({
   setProfileSetupModalOpen: (open) => set({ profileSetupModalOpen: open }),
   onboardingModalOpen: false,
   setOnboardingModalOpen: (open) => set({ onboardingModalOpen: open }),
+  emailVerificationModalOpen: false,
+  setEmailVerificationModalOpen: (open) =>
+    set({ emailVerificationModalOpen: open }),
+  emailVerificationEmail: "",
+  setEmailVerificationEmail: (email) => set({ emailVerificationEmail: email }),
+  logoutConfirmModalOpen: false,
+  setLogoutConfirmModalOpen: (open) => set({ logoutConfirmModalOpen: open }),
+  deleteAccountConfirmModalOpen: false,
+  setDeleteAccountConfirmModalOpen: (open) =>
+    set({ deleteAccountConfirmModalOpen: open }),
 }));
-

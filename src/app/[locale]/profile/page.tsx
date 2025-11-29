@@ -4,6 +4,7 @@ import { getFavorites } from "@/actions/favorite";
 import { ProfileForm } from "@/components/features/ProfileForm";
 import { ReviewList } from "@/components/features/ReviewList";
 import { AnimeGrid } from "@/components/anime/anime-grid";
+import { DeleteAccountButton } from "@/components/features/DeleteAccountButton";
 import { tmdbClient } from "@/lib/tmdb/client";
 import { routing } from "@/i18n/routing";
 import { notFound, redirect } from "next/navigation";
@@ -137,6 +138,7 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
               {t("edit_profile")}
             </h3>
             <ProfileForm profile={profile} />
+            <DeleteAccountButton />
           </div>
         </div>
 
@@ -197,6 +199,7 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
     </main>
   );
 }
+
 
 
 

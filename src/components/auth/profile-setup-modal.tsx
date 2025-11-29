@@ -67,11 +67,23 @@ export function ProfileSetupModal() {
         throw new Error(result.error || t('error'));
       }
 
-      // 프로필 설정 완료 후 온보딩 모달 열기
+      // 프로필 설정 완료
       setProfileSetupModalOpen(false);
-      const { setOnboardingModalOpen } = useModalStore.getState();
-      setOnboardingModalOpen(true);
       toast.success('프로필이 설정되었습니다');
+      
+      // 찜하기가 없으면 온보딩 모달 열기
+      const { getFavorites } = await import('@/actions/favorite');
+      const favoritesResult = await getFavorites();
+      const hasFavorites =
+        favoritesResult.success && favoritesResult.data.length > 0;
+
+      if (!hasFavorites) {
+        const { setOnboardingModalOpen } = useModalStore.getState();
+        // 약간의 딜레이를 주어 프로필 설정 모달이 닫힌 후 열림
+        setTimeout(() => {
+          setOnboardingModalOpen(true);
+        }, 300);
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : t('error'));
     } finally {

@@ -17,14 +17,13 @@ export function Header() {
   const pathname = usePathname();
   const router = useRouter();
   const { user } = useAuthStore();
-  const { setLoginModalOpen } = useModalStore();
+  const { setLoginModalOpen, setLogoutConfirmModalOpen } = useModalStore();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [localeMenuOpen, setLocaleMenuOpen] = useState(false);
 
-  const handleLogout = async () => {
-    const supabase = createClient();
-    await supabase.auth.signOut();
-    useAuthStore.getState().setUser(null);
+  const handleLogout = () => {
+    const { setLogoutConfirmModalOpen } = useModalStore.getState();
+    setLogoutConfirmModalOpen(true);
   };
 
   const handleLocaleChange = (locale: string) => {

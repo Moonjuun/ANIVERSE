@@ -23,6 +23,7 @@ export function LoginModal() {
   const [error, setError] = useState<string | null>(null);
   const [termsAgreed, setTermsAgreed] = useState(false);
   const [marketingAgreed, setMarketingAgreed] = useState(false);
+  const [emailSent, setEmailSent] = useState(false);
 
   const supabase = createClient();
 
@@ -71,17 +72,60 @@ export function LoginModal() {
 
     try {
       if (isSignUp) {
+        // 현재 locale 가져오기 (URL에서 추출)
+        const pathSegments = window.location.pathname.split('/').filter(Boolean);
+        const currentLocale = pathSegments[0] && ['ko', 'en', 'ja'].includes(pathSegments[0]) 
+          ? pathSegments[0] 
+          : 'ko';
+        
         const { data, error: signUpError } = await supabase.auth.signUp({
           email,
           password,
+          options: {
+            emailRedirectTo: `${window.location.origin}/${currentLocale}/auth/confirm?next=/${currentLocale}`,
+            data: {
+              locale: currentLocale, // 이메일 템플릿에서 사용할 locale 정보
+            },
+          },
         });
 
-        if (signUpError) throw signUpError;
+        if (signUpError) {
+          // 중복 이메일 가입 방지: Supabase가 자동으로 처리하지만 사용자 친화적인 메시지 제공
+          const errorMessage = signUpError.message?.toLowerCase() || '';
+          if (
+            errorMessage.includes('already registered') ||
+            errorMessage.includes('user already exists') ||
+            errorMessage.includes('email already') ||
+            errorMessage.includes('already been registered') ||
+            signUpError.status === 422
+          ) {
+            setError(t('email_already_registered'));
+          } else if (errorMessage.includes('invalid email') || errorMessage.includes('email format')) {
+            setError(t('invalid_email'));
+          } else if (errorMessage.includes('password') && errorMessage.includes('weak')) {
+            setError(t('weak_password'));
+          } else {
+            setError(signUpError.message || t('signup_failed'));
+          }
+          return;
+        }
         
-        if (data.user) {
+        // 이메일 인증이 필요한 경우
+        if (data.user && !data.session) {
+          // 이메일 인증 메일이 발송됨
+          setEmailSent(true);
+          setLoginModalOpen(false);
+          const { setEmailVerificationModalOpen, setEmailVerificationEmail } = useModalStore.getState();
+          setEmailVerificationEmail(email);
+          setEmailVerificationModalOpen(true);
+          return;
+        }
+        
+        // 이메일 인증이 완료된 경우 (세션이 있는 경우)
+        if (data.user && data.session) {
           setUser(data.user);
           setLoginModalOpen(false);
-          // 회원가입 성공 시 프로필 설정 모달로 이동
+          // 프로필 설정 모달로 이동
           const { setProfileSetupModalOpen } = useModalStore.getState();
           setProfileSetupModalOpen(true);
         }

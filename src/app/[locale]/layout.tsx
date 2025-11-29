@@ -4,6 +4,9 @@ import { routing } from "@/i18n/routing";
 import { LoginModal } from "@/components/auth/login-modal";
 import { ProfileSetupModal } from "@/components/auth/profile-setup-modal";
 import { OnboardingModal } from "@/components/auth/onboarding-modal";
+import { EmailVerificationModalWrapper } from "@/components/auth/email-verification-modal-wrapper";
+import { LogoutConfirmModal } from "@/components/auth/logout-confirm-modal";
+import { DeleteAccountConfirmModal } from "@/components/auth/delete-account-confirm-modal";
 import { Header } from "@/components/layouts/Header";
 import { QueryProvider } from "@/providers/QueryProvider";
 import { ToastContainer } from "@/components/ui/toast";
@@ -46,6 +49,9 @@ export default async function LocaleLayout({
           <LoginModal />
           <ProfileSetupModal />
           <OnboardingModal animeData={onboardingAnime} />
+          <EmailVerificationModalWrapper />
+          <LogoutConfirmModal />
+          <DeleteAccountConfirmModal />
           <ToastContainer />
         </QueryProvider>
       </ErrorBoundary>

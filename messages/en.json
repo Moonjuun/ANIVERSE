@@ -115,7 +115,8 @@
     "my_reviews": "My Reviews",
     "my_favorites": "My Favorites",
     "no_reviews": "You haven't written any reviews yet.",
-    "no_favorites": "You haven't favorited any anime yet."
+    "no_favorites": "You haven't favorited any anime yet.",
+    "delete_account": "Delete Account"
   },
   "reviews": {
     "list": {
@@ -190,7 +191,11 @@
       "terms_required": "(Required) I agree to the Terms of Service and Privacy Policy",
       "marketing_optional": "(Optional) I agree to receive marketing notifications",
       "terms_link": "Terms of Service",
-      "privacy_link": "Privacy Policy"
+      "privacy_link": "Privacy Policy",
+      "email_already_registered": "This email is already registered. Please try logging in.",
+      "invalid_email": "Invalid email address.",
+      "weak_password": "Password is too weak. Please use a stronger password.",
+      "signup_failed": "Sign up failed. Please try again."
     },
     "profile_setup": {
       "title": "Almost there!",
@@ -213,6 +218,43 @@
       "complete": "Complete",
       "loading": "Setting up...",
       "error": "Failed to complete onboarding."
+    },
+    "email_verification": {
+      "title": "Please check your email",
+      "subtitle": "Email verification is required to complete your signup",
+      "email_sent_to": " has been sent to",
+      "instruction_1": "Please check your inbox and click the verification link.",
+      "instruction_2": "You will be automatically logged in after verification.",
+      "close": "Got it",
+      "back_to_login": "Back to login"
+    },
+    "error": {
+      "title": "Verification Error",
+      "message": "Email verification failed. The link may have expired or is invalid.",
+      "go_home": "Go to Home"
+    },
+    "logout": {
+      "title": "Logout",
+      "message": "Are you sure you want to logout?",
+      "cancel": "Cancel",
+      "confirm": "Logout",
+      "logging_out": "Logging out..."
+    },
+    "delete_account": {
+      "title": "Delete Account",
+      "message": "Are you sure you want to delete your account?",
+      "warning_title": "Warning",
+      "warning_1": "All profile information will be deleted",
+      "warning_2": "All reviews and favorites will be deleted",
+      "warning_3": "This action cannot be undone",
+      "confirm_label": "Type 'DELETE' to confirm",
+      "confirm_placeholder": "DELETE",
+      "confirm_text_mismatch": "Please type 'DELETE' exactly",
+      "cancel": "Cancel",
+      "confirm": "Delete Account",
+      "deleting": "Deleting...",
+      "success": "Account deletion completed",
+      "error": "Account deletion failed"
     }
   },
   "privacy": {

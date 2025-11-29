@@ -115,7 +115,8 @@
     "my_reviews": "내 리뷰",
     "my_favorites": "찜한 애니메이션",
     "no_reviews": "작성한 리뷰가 없습니다.",
-    "no_favorites": "찜한 애니메이션이 없습니다."
+    "no_favorites": "찜한 애니메이션이 없습니다.",
+    "delete_account": "회원탈퇴"
   },
   "reviews": {
     "list": {
@@ -190,7 +191,11 @@
       "terms_required": "(필수) 이용약관 및 개인정보 처리방침 동의",
       "marketing_optional": "(선택) 마케팅 정보 수신 동의 (알림)",
       "terms_link": "이용약관",
-      "privacy_link": "개인정보 처리방침"
+      "privacy_link": "개인정보 처리방침",
+      "email_already_registered": "이미 가입된 이메일입니다. 로그인을 시도해주세요.",
+      "invalid_email": "유효하지 않은 이메일 주소입니다.",
+      "weak_password": "비밀번호가 너무 약합니다. 더 강한 비밀번호를 사용해주세요.",
+      "signup_failed": "회원가입에 실패했습니다. 다시 시도해주세요."
     },
     "profile_setup": {
       "title": "거의 다 왔어요!",
@@ -213,6 +218,43 @@
       "complete": "완료",
       "loading": "설정 중...",
       "error": "온보딩 설정에 실패했습니다."
+    },
+    "email_verification": {
+      "title": "이메일 인증 메일을 확인해주세요",
+      "subtitle": "회원가입을 완료하려면 이메일 인증이 필요합니다",
+      "email_sent_to": "로 인증 메일을 보냈습니다",
+      "instruction_1": "이메일 받은편지함을 확인하고 인증 링크를 클릭해주세요.",
+      "instruction_2": "인증이 완료되면 자동으로 로그인됩니다.",
+      "close": "확인",
+      "back_to_login": "로그인으로 돌아가기"
+    },
+    "error": {
+      "title": "인증 오류",
+      "message": "이메일 인증에 실패했습니다. 링크가 만료되었거나 잘못된 링크일 수 있습니다.",
+      "go_home": "홈으로 돌아가기"
+    },
+    "logout": {
+      "title": "로그아웃",
+      "message": "정말 로그아웃하시겠습니까?",
+      "cancel": "취소",
+      "confirm": "로그아웃",
+      "logging_out": "로그아웃 중..."
+    },
+    "delete_account": {
+      "title": "회원탈퇴",
+      "message": "정말 회원탈퇴를 진행하시겠습니까?",
+      "warning_title": "주의사항",
+      "warning_1": "모든 프로필 정보가 삭제됩니다",
+      "warning_2": "작성한 리뷰와 찜하기 목록이 모두 삭제됩니다",
+      "warning_3": "이 작업은 되돌릴 수 없습니다",
+      "confirm_label": "탈퇴를 확인하려면 '탈퇴'를 입력하세요",
+      "confirm_placeholder": "탈퇴",
+      "confirm_text_mismatch": "'탈퇴'를 정확히 입력해주세요",
+      "cancel": "취소",
+      "confirm": "회원탈퇴",
+      "deleting": "탈퇴 중...",
+      "success": "회원탈퇴가 완료되었습니다",
+      "error": "회원탈퇴에 실패했습니다"
     }
   },
   "privacy": {

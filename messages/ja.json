@@ -115,7 +115,8 @@
     "my_reviews": "私のレビュー",
     "my_favorites": "お気に入りのアニメ",
     "no_reviews": "レビューをまだ書いていません。",
-    "no_favorites": "お気に入りのアニメがまだありません。"
+    "no_favorites": "お気に入りのアニメがまだありません。",
+    "delete_account": "アカウント削除"
   },
   "reviews": {
     "list": {
@@ -190,7 +191,11 @@
       "terms_required": "（必須）利用規約および個人情報処理方針に同意",
       "marketing_optional": "（任意）マーケティング情報の受信に同意（通知）",
       "terms_link": "利用規約",
-      "privacy_link": "個人情報処理方針"
+      "privacy_link": "個人情報処理方針",
+      "email_already_registered": "このメールアドレスは既に登録されています。ログインをお試しください。",
+      "invalid_email": "無効なメールアドレスです。",
+      "weak_password": "パスワードが弱すぎます。より強力なパスワードを使用してください。",
+      "signup_failed": "登録に失敗しました。もう一度お試しください。"
     },
     "profile_setup": {
       "title": "もう少しです！",
@@ -213,6 +218,43 @@
       "complete": "完了",
       "loading": "設定中...",
       "error": "オンボーディングの完了に失敗しました。"
+    },
+    "email_verification": {
+      "title": "メールを確認してください",
+      "subtitle": "登録を完了するにはメール認証が必要です",
+      "email_sent_to": "に認証メールを送信しました",
+      "instruction_1": "メール受信トレイを確認し、認証リンクをクリックしてください。",
+      "instruction_2": "認証が完了すると自動的にログインされます。",
+      "close": "了解",
+      "back_to_login": "ログインに戻る"
+    },
+    "error": {
+      "title": "認証エラー",
+      "message": "メール認証に失敗しました。リンクが期限切れか、無効なリンクの可能性があります。",
+      "go_home": "ホームに戻る"
+    },
+    "logout": {
+      "title": "ログアウト",
+      "message": "本当にログアウトしますか？",
+      "cancel": "キャンセル",
+      "confirm": "ログアウト",
+      "logging_out": "ログアウト中..."
+    },
+    "delete_account": {
+      "title": "アカウント削除",
+      "message": "本当にアカウントを削除しますか？",
+      "warning_title": "注意事項",
+      "warning_1": "すべてのプロフィール情報が削除されます",
+      "warning_2": "すべてのレビューとお気に入りが削除されます",
+      "warning_3": "この操作は元に戻せません",
+      "confirm_label": "削除を確認するには「削除」と入力してください",
+      "confirm_placeholder": "削除",
+      "confirm_text_mismatch": "「削除」と正確に入力してください",
+      "cancel": "キャンセル",
+      "confirm": "アカウント削除",
+      "deleting": "削除中...",
+      "success": "アカウント削除が完了しました",
+      "error": "アカウント削除に失敗しました"
     }
   },
   "privacy": {

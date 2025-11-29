@@ -73,7 +73,7 @@ export function OnboardingModal({ animeData }: OnboardingModalProps) {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-md"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-md p-4"
       onClick={() => {
         // 3개 선택 전에는 닫기 방지
         if (selectedAnimeIds.length === 3) {
@@ -83,33 +83,37 @@ export function OnboardingModal({ animeData }: OnboardingModalProps) {
     >
       <div
         className={cn(
-          'relative w-full max-w-4xl rounded-xl bg-zinc-900 p-6 shadow-xl',
-          'animate-in fade-in-0 zoom-in-95'
+          'relative w-full max-w-4xl max-h-[90vh] rounded-xl bg-zinc-900 p-4 md:p-6 shadow-xl',
+          'animate-in fade-in-0 zoom-in-95',
+          'overflow-y-auto'
         )}
         onClick={(e) => e.stopPropagation()}
       >
-        <button
-          onClick={() => {
-            if (selectedAnimeIds.length === 3) {
-              setOnboardingModalOpen(false);
-            }
-          }}
-          className="absolute right-4 top-4 text-zinc-400 hover:text-white"
-          disabled={selectedAnimeIds.length !== 3}
-        >
-          <X className="h-5 w-5" />
-        </button>
+        <div className="sticky top-0 z-10 mb-4 flex justify-end">
+          <button
+            onClick={() => {
+              if (selectedAnimeIds.length === 3) {
+                setOnboardingModalOpen(false);
+              }
+            }}
+            className="flex h-8 w-8 items-center justify-center rounded-full bg-zinc-800 text-zinc-400 transition-colors hover:bg-zinc-700 hover:text-white disabled:opacity-30"
+            disabled={selectedAnimeIds.length !== 3}
+            aria-label="Close"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        </div>
 
-        <div className="mb-6 text-center">
-          <h2 className="mb-2 text-2xl font-semibold text-white">{t('title')}</h2>
-          <p className="text-sm text-zinc-400">{t('subtitle')}</p>
-          <p className="mt-2 text-sm text-zinc-500">
+        <div className="mb-4 md:mb-6 text-center">
+          <h2 className="mb-2 text-xl md:text-2xl font-semibold text-white">{t('title')}</h2>
+          <p className="text-xs md:text-sm text-zinc-400">{t('subtitle')}</p>
+          <p className="mt-2 text-xs md:text-sm text-zinc-500">
             {selectedAnimeIds.length} / 3 {t('selected')}
           </p>
         </div>
 
         {/* 벤토 그리드 */}
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
+        <div className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-4 lg:grid-cols-4">
           {availableAnimes.slice(0, 12).map((anime) => {
             const isSelected = selectedAnimeIds.includes(anime.id);
             const isDisabled = !isSelected && selectedAnimeIds.length >= 3;
@@ -160,8 +164,8 @@ export function OnboardingModal({ animeData }: OnboardingModalProps) {
                     </div>
                   )}
                 </div>
-                <div className="p-2">
-                  <p className="truncate text-xs font-medium text-white">{anime.name}</p>
+                <div className="p-2 md:p-3">
+                  <p className="truncate text-xs md:text-sm font-medium text-white">{anime.name}</p>
                 </div>
               </button>
             );
@@ -174,11 +178,11 @@ export function OnboardingModal({ animeData }: OnboardingModalProps) {
           </div>
         )}
 
-        <div className="mt-6 flex justify-center">
+        <div className="mt-4 md:mt-6 flex justify-center">
           <Button
             onClick={handleComplete}
             disabled={selectedAnimeIds.length !== 3 || loading}
-            className="min-w-[200px]"
+            className="w-full md:min-w-[200px]"
           >
             {loading ? t('loading') : t('complete')}
           </Button>
