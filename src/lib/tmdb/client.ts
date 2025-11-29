@@ -10,21 +10,21 @@ import type {
   TMDBTVDetail,
   TMDBGenre,
   TMDBWatchProviders,
-} from '@/types/tmdb';
+} from "@/types/tmdb";
 
-const TMDB_BASE_URL = 'https://api.themoviedb.org/3';
-const TMDB_IMAGE_BASE_URL = 'https://image.tmdb.org/t/p';
+const TMDB_BASE_URL = "https://api.themoviedb.org/3";
+const TMDB_IMAGE_BASE_URL = "https://image.tmdb.org/t/p";
 
 class TMDBClient {
   private accessToken: string;
   private baseURL: string;
 
   constructor() {
-    this.accessToken = process.env.TMDB_ACCESS_TOKEN || '';
+    this.accessToken = process.env.TMDB_ACCESS_TOKEN || "";
     this.baseURL = TMDB_BASE_URL;
 
     if (!this.accessToken) {
-      console.warn('TMDB_ACCESS_TOKEN is not set in environment variables');
+      console.warn("TMDB_ACCESS_TOKEN is not set in environment variables");
     }
   }
 
@@ -41,16 +41,18 @@ class TMDBClient {
 
     const url = `${this.baseURL}${endpoint}?${searchParams.toString()}`;
 
-    const fetchOptions: RequestInit = {
+    const fetchOptions: RequestInit & {
+      next?: { revalidate: number };
+    } = {
       headers: {
         Authorization: `Bearer ${this.accessToken}`,
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
     };
 
     // 서버 컴포넌트에서만 next 옵션 사용
     if (!isClient) {
-      (fetchOptions as any).next = {
+      fetchOptions.next = {
         revalidate: 3600, // 1시간 캐시
       };
     }
@@ -59,7 +61,9 @@ class TMDBClient {
 
     if (!response.ok) {
       const errorText = await response.text();
-      throw new Error(`TMDB API error: ${response.status} ${response.statusText} - ${errorText}`);
+      throw new Error(
+        `TMDB API error: ${response.status} ${response.statusText} - ${errorText}`
+      );
     }
 
     return response.json();
@@ -70,9 +74,9 @@ class TMDBClient {
    */
   async getPopularMovies(
     page: number = 1,
-    language: string = 'ko-KR'
+    language: string = "ko-KR"
   ): Promise<TMDBResponse<TMDBMovie>> {
-    return this.fetch<TMDBResponse<TMDBMovie>>('/movie/popular', {
+    return this.fetch<TMDBResponse<TMDBMovie>>("/movie/popular", {
       page,
       language,
     });
@@ -83,9 +87,9 @@ class TMDBClient {
    */
   async getPopularTVShows(
     page: number = 1,
-    language: string = 'ko-KR'
+    language: string = "ko-KR"
   ): Promise<TMDBResponse<TMDBTVShow>> {
-    return this.fetch<TMDBResponse<TMDBTVShow>>('/tv/popular', {
+    return this.fetch<TMDBResponse<TMDBTVShow>>("/tv/popular", {
       page,
       language,
     });
@@ -96,19 +100,25 @@ class TMDBClient {
    */
   async getAnimeShows(
     page: number = 1,
-    language: string = 'ko-KR',
+    language: string = "ko-KR",
     isClient: boolean = false,
     options?: {
       genre?: number;
       year?: number;
-      sortBy?: 'popularity.desc' | 'popularity.asc' | 'vote_average.desc' | 'vote_average.asc' | 'first_air_date.desc' | 'first_air_date.asc';
+      sortBy?:
+        | "popularity.desc"
+        | "popularity.asc"
+        | "vote_average.desc"
+        | "vote_average.asc"
+        | "first_air_date.desc"
+        | "first_air_date.asc";
     }
   ): Promise<TMDBResponse<TMDBTVShow>> {
     const params: Record<string, string | number> = {
       page,
       language,
-      with_genres: '16', // 애니메이션 장르 ID는 16
-      sort_by: options?.sortBy || 'popularity.desc',
+      with_genres: "16", // 애니메이션 장르 ID는 16
+      sort_by: options?.sortBy || "popularity.desc",
     };
 
     // 추가 장르 필터
@@ -122,7 +132,7 @@ class TMDBClient {
     }
 
     return this.fetch<TMDBResponse<TMDBTVShow>>(
-      '/discover/tv',
+      "/discover/tv",
       params,
       isClient
     );
@@ -133,7 +143,7 @@ class TMDBClient {
    */
   async getMovieDetail(
     id: number,
-    language: string = 'ko-KR'
+    language: string = "ko-KR"
   ): Promise<TMDBDetail> {
     return this.fetch<TMDBDetail>(`/movie/${id}`, { language });
   }
@@ -143,7 +153,7 @@ class TMDBClient {
    */
   async getTVDetail(
     id: number,
-    language: string = 'ko-KR'
+    language: string = "ko-KR"
   ): Promise<TMDBTVDetail> {
     return this.fetch<TMDBTVDetail>(`/tv/${id}`, { language });
   }
@@ -154,7 +164,7 @@ class TMDBClient {
   async search(
     query: string,
     page: number = 1,
-    language: string = 'ko-KR',
+    language: string = "ko-KR",
     isClient: boolean = false
   ): Promise<{
     movies: TMDBResponse<TMDBMovie>;
@@ -162,7 +172,7 @@ class TMDBClient {
   }> {
     const [movies, tv] = await Promise.all([
       this.fetch<TMDBResponse<TMDBMovie>>(
-        '/search/movie',
+        "/search/movie",
         {
           query,
           page,
@@ -171,7 +181,7 @@ class TMDBClient {
         isClient
       ),
       this.fetch<TMDBResponse<TMDBTVShow>>(
-        '/search/tv',
+        "/search/tv",
         {
           query,
           page,
@@ -187,13 +197,13 @@ class TMDBClient {
   /**
    * 장르 목록 가져오기
    */
-  async getGenres(language: string = 'ko-KR'): Promise<{
+  async getGenres(language: string = "ko-KR"): Promise<{
     movie: { genres: TMDBGenre[] };
     tv: { genres: TMDBGenre[] };
   }> {
     const [movie, tv] = await Promise.all([
-      this.fetch<{ genres: TMDBGenre[] }>('/genre/movie/list', { language }),
-      this.fetch<{ genres: TMDBGenre[] }>('/genre/tv/list', { language }),
+      this.fetch<{ genres: TMDBGenre[] }>("/genre/movie/list", { language }),
+      this.fetch<{ genres: TMDBGenre[] }>("/genre/tv/list", { language }),
     ]);
 
     return { movie, tv };
@@ -204,7 +214,7 @@ class TMDBClient {
    */
   async getTVWatchProviders(
     id: number,
-    language: string = 'ko-KR'
+    language: string = "ko-KR"
   ): Promise<TMDBWatchProviders> {
     return this.fetch<TMDBWatchProviders>(`/tv/${id}/watch/providers`, {
       language,
@@ -214,9 +224,12 @@ class TMDBClient {
   /**
    * 이미지 URL 생성
    */
-  getImageURL(path: string | null, size: 'w500' | 'w780' | 'original' = 'w500'): string {
+  getImageURL(
+    path: string | null,
+    size: "w500" | "w780" | "original" = "w500"
+  ): string {
     if (!path) {
-      return '/images/placeholder-poster.png'; // 플레이스홀더 이미지
+      return "/images/placeholder-poster.png"; // 플레이스홀더 이미지
     }
     return `${TMDB_IMAGE_BASE_URL}/${size}${path}`;
   }
@@ -225,17 +238,16 @@ class TMDBClient {
    * 포스터 이미지 URL
    */
   getPosterURL(path: string | null): string {
-    return this.getImageURL(path, 'w500');
+    return this.getImageURL(path, "w500");
   }
 
   /**
    * 백드롭 이미지 URL
    */
   getBackdropURL(path: string | null): string {
-    return this.getImageURL(path, 'w780');
+    return this.getImageURL(path, "w780");
   }
 }
 
 // 싱글톤 인스턴스
 export const tmdbClient = new TMDBClient();
-
