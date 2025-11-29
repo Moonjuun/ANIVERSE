@@ -82,3 +82,6 @@ export default async function FavoritesPage({ params }: FavoritesPageProps) {
   );
 }
 
+
+
+

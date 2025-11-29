@@ -58,3 +58,6 @@ export const AVATARS = [
 
 export type AvatarId = (typeof AVATARS)[number]['id'];
 
+
+
+

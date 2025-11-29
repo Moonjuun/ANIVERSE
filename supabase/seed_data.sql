@@ -150,3 +150,6 @@ INSERT INTO public.favorites (user_id, anime_id)
 SELECT id, 120089 FROM auth.users ORDER BY created_at OFFSET 1 LIMIT 1
 ON CONFLICT (user_id, anime_id) DO NOTHING;
 
+
+
+
