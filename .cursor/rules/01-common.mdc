@@ -180,6 +180,7 @@ export default async function HomePage({
 ```
 
 5. **루트 레이아웃 (`src/app/layout.tsx`)**:
+
    - ⚠️ locale 파라미터를 받지 않음 (params 없음)
    - ⚠️ html, body 태그만 포함
    - ⚠️ 전역 설정(폰트, 메타데이터 등)만 처리
