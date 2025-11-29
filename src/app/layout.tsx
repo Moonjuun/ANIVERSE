@@ -21,6 +21,10 @@ export const metadata: Metadata = {
     default: "AniVerse",
   },
   description: "애니메이션 리뷰와 추천을 한 곳에서",
+  icons: {
+    icon: "/icon.svg",
+    apple: "/icon.svg",
+  },
 };
 
 export default function RootLayout({
