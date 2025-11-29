@@ -129,6 +129,103 @@
     "search": "Search",
     "results_for": "Results for",
     "results": "results"
+  },
+  "terms": {
+    "title": "Terms of Service",
+    "last_updated": "Last Updated",
+    "sections": {
+      "overview": {
+        "title": "1. Service Overview",
+        "content": "These terms govern the use of AniVerse (hereinafter referred to as \"the Service\") and define the rights, obligations, and responsibilities between users and operators.",
+        "login": "The Service provides login functionality through Google account integration.",
+        "independent": "The Service operates independently and is not officially affiliated with Google."
+      },
+      "user_obligations": {
+        "title": "2. User Obligations",
+        "account": "Users are responsible for securely managing their account information.",
+        "prohibited": "Users must not infringe upon others' rights, violate laws, or interfere with service operations while using the Service."
+      },
+      "prohibited_acts": {
+        "title": "3. Prohibited Acts",
+        "illegal": "Posting illegal information or defaming and damaging others' reputation",
+        "advertising": "Unauthorized advertising or commercial activities",
+        "automation": "Accessing the Service abnormally through automated means"
+      },
+      "service_changes": {
+        "title": "4. Service Changes and Discontinuation",
+        "changes": "The Service may be modified or discontinued as necessary for operational purposes.",
+        "termination": "If the Service is terminated, it may be discontinued after prior notice, and no separate compensation will be provided for the discontinuation of the free service."
+      },
+      "liability": {
+        "title": "5. Limitation of Liability",
+        "content": "The operator shall not be liable for damages arising from the use of the Service, except in cases of intentional or gross negligence."
+      },
+      "intellectual_property": {
+        "title": "6. Intellectual Property",
+        "rights": "All rights to the Service and related content belong to the operator.",
+        "prohibition": "Users may not reproduce or distribute content without the operator's permission."
+      },
+      "governing_law": {
+        "title": "7. Governing Law and Jurisdiction",
+        "law": "These terms shall be interpreted and applied in accordance with the laws of the Republic of Korea.",
+        "disputes": "Disputes arising from the use of the Service shall be resolved in accordance with relevant legal procedures."
+      },
+      "effective_date": {
+        "title": "8. Effective Date",
+        "date": "These terms shall take effect from January 1, 2025."
+      }
+    }
+  },
+  "privacy": {
+    "title": "Privacy Policy",
+    "last_updated": "Last Updated",
+    "intro": "AniVerse (hereinafter referred to as \"AniVerse\") values users' personal information and protects it safely in accordance with relevant laws and regulations. The Service also provides login functionality through the Google platform, collecting only the minimum necessary personal information through this process.",
+    "sections": {
+      "collection": {
+        "title": "1. Personal Information Collected and Collection Methods",
+        "items": "Items collected: Name, email address (provided by Google login provider)",
+        "method": "Collection method: Automatically collected through Google login integration"
+      },
+      "purpose": {
+        "title": "2. Purpose of Personal Information Use",
+        "identification": "User identification and login authentication",
+        "service": "Service provision and operation",
+        "notifications": "Essential notifications such as announcements"
+      },
+      "retention": {
+        "title": "3. Retention and Use Period of Personal Information",
+        "period": "Retained until membership withdrawal.",
+        "deletion": "All personal information is immediately destroyed upon withdrawal without delay."
+      },
+      "third_party": {
+        "title": "4. Third-Party Provision of Personal Information",
+        "no_sharing": "Collected personal information is not provided to external parties.",
+        "exception": "However, it may be exceptionally provided when required by law."
+      },
+      "entrustment": {
+        "title": "5. Personal Information Processing Entrustment",
+        "none": "Currently, personal information processing is not entrusted to third parties."
+      },
+      "cookies": {
+        "title": "6. Automatically Collected Information and Cookies",
+        "usage": "Cookies may be used for login maintenance and statistical analysis.",
+        "blocking": "Cookies can be blocked through user browser settings."
+      },
+      "rights": {
+        "title": "7. User Rights and Exercise Methods",
+        "access": "Users may request access, correction, deletion, or suspension of processing of personal information.",
+        "contact": "For inquiries, please contact us through the profile page."
+      },
+      "officer": {
+        "title": "8. Personal Information Protection Officer",
+        "officer": "Officer: AniVerse Service Operator",
+        "email": "Email: support@aniverse.app"
+      },
+      "effective_date": {
+        "title": "9. Policy Changes",
+        "date": "This policy takes effect from January 1, 2025."
+      }
+    }
   }
 }
 

@@ -19,5 +19,7 @@ export const ROUTES = {
   },
   FAVORITES: () => `/favorites`,
   SEARCH: () => `/search`,
+  TERMS: () => `/terms`,
+  PRIVACY: () => `/privacy`,
 } as const;
 

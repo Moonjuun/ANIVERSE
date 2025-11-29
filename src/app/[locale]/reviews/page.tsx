@@ -48,6 +48,8 @@ export default async function ReviewsPage({ params }: ReviewsPageProps) {
     (anime): anime is TMDBTVDetail => anime !== null
   );
 
+  // 애니메이션을 anime_id로 매핑하여 전달 (클라이언트에서 사용하기 쉽게)
+
   return (
     <main className="mx-auto max-w-7xl px-4 py-12 md:px-6 lg:px-8">
       <div className="mb-8">
@@ -61,6 +63,7 @@ export default async function ReviewsPage({ params }: ReviewsPageProps) {
       <ReviewListClient
         initialData={{
           reviews: initialResult.data as any,
+          animes: animes,
           total: initialResult.total,
           page: initialResult.page,
           totalPages: initialResult.totalPages,

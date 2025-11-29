@@ -20,6 +20,7 @@ type Review = Database["public"]["Tables"]["reviews"]["Row"] & {
 interface ReviewListClientProps {
   initialData: {
     reviews: Review[];
+    animes?: TMDBTVDetail[];
     total: number;
     page: number;
     totalPages: number;
@@ -56,13 +57,14 @@ export function ReviewListClient({
           .catch(() => null)
       );
 
-      const animes = await Promise.all(animePromises);
+      const animeResults = await Promise.all(animePromises);
+      const animes = animeResults.filter(
+        (anime): anime is TMDBTVDetail => anime !== null
+      );
 
       return {
         reviews: result.data,
-        animes: animes.filter(
-          (anime): anime is TMDBTVDetail => anime !== null
-        ),
+        animes,
         total: result.total,
         page: result.page,
         totalPages: result.totalPages,
@@ -79,7 +81,7 @@ export function ReviewListClient({
       pages: [
         {
           reviews: initialData.reviews as any,
-          animes: [],
+          animes: initialData.animes || [],
           total: initialData.total,
           page: initialData.page,
           totalPages: initialData.totalPages,
@@ -89,11 +91,11 @@ export function ReviewListClient({
     },
   });
 
-  // 첫 페이지의 애니메이션 정보 로드
+  // 첫 페이지의 애니메이션 정보 로드 (서버에서 이미 전달되므로 이제는 필요 없지만, 폴백으로 유지)
   useEffect(() => {
     if (data?.pages[0] && data.pages[0].animes.length === 0) {
       const loadAnimes = async () => {
-        const animePromises = data.pages[0].reviews.map((review) =>
+        const animePromises = data.pages[0].reviews.map((review: Review) =>
           tmdbClient.getTVDetail(review.anime_id, language).catch(() => null)
         );
         const animes = await Promise.all(animePromises);
@@ -102,7 +104,7 @@ export function ReviewListClient({
       };
       loadAnimes();
     }
-  }, []);
+  }, [data, language]);
 
   // Intersection Observer로 무한 스크롤 구현
   useEffect(() => {
@@ -134,10 +136,15 @@ export function ReviewListClient({
   }> = [];
 
   data?.pages.forEach((page) => {
-    page.reviews.forEach((review: any, index) => {
+    // 애니메이션을 anime_id로 매핑
+    const animeMap = new Map(
+      page.animes.map((anime) => [anime.id, anime])
+    );
+
+    page.reviews.forEach((review: any) => {
       allReviews.push({
         review,
-        anime: page.animes[index] || null,
+        anime: animeMap.get(review.anime_id) || null,
       });
     });
   });
