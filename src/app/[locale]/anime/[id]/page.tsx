@@ -16,6 +16,7 @@ import {
 } from "@/lib/utils/anime-status";
 import { formatDate } from "@/lib/utils/date-format";
 import type { TMDBTVDetail } from "@/types/tmdb";
+import type { AniListReview } from "@/lib/anilist/client";
 
 export async function generateStaticParams() {
   // 동적 생성이므로 빈 배열 반환 (ISR 사용)
@@ -84,7 +85,7 @@ export async function generateMetadata({
         images: [ogImageUrl],
       },
     };
-  } catch (error) {
+  } catch {
     return {
       title: "애니메이션 상세 | AniVerse",
       description: "애니메이션 정보를 불러올 수 없습니다.",
@@ -114,7 +115,7 @@ export default async function AnimeDetailPage({
   let anime: TMDBTVDetail;
   let watchProviders;
   let tmdbReviews;
-  let anilistReviews = [];
+  let anilistReviews: AniListReview[] = [];
   let anilistMediaId: number | null = null;
 
   try {
@@ -134,7 +135,7 @@ export default async function AnimeDetailPage({
       if (anilistMediaId) {
         anilistReviews = await anilistClient
           .getReviews(anilistMediaId, 1, 10)
-          .catch(() => []);
+          .catch((): AniListReview[] => []);
 
         if (process.env.NODE_ENV === "development") {
           console.log("AniList Reviews:", {
