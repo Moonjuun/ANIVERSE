@@ -9,6 +9,7 @@ import { useToast } from "@/lib/utils/toast";
 import { useAuthStore } from "@/stores/useAuthStore";
 import Image from "next/image";
 import type { Database } from "@/types/supabase";
+import { getAvatarEmoji } from "@/lib/utils/avatar";
 
 type Review = Database["public"]["Tables"]["reviews"]["Row"] & {
   user_profiles: {
@@ -105,13 +106,22 @@ export function ReviewList({ animeId, onEdit, refreshKey }: ReviewListProps) {
             <div className="mb-4 flex items-start justify-between">
               <div className="flex items-center gap-3">
                 {review.user_profiles?.avatar_url ? (
-                  <Image
-                    src={review.user_profiles.avatar_url}
-                    alt={displayName}
-                    width={40}
-                    height={40}
-                    className="h-10 w-10 rounded-full object-cover"
-                  />
+                  (() => {
+                    const avatarEmoji = getAvatarEmoji(review.user_profiles.avatar_url);
+                    return avatarEmoji ? (
+                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-zinc-800 text-2xl">
+                        {avatarEmoji}
+                      </div>
+                    ) : (
+                      <Image
+                        src={review.user_profiles.avatar_url}
+                        alt={displayName}
+                        width={40}
+                        height={40}
+                        className="h-10 w-10 rounded-full object-cover"
+                      />
+                    );
+                  })()
                 ) : (
                   <div className="flex h-10 w-10 items-center justify-center rounded-full bg-zinc-800 text-zinc-400">
                     {displayName.charAt(0).toUpperCase()}

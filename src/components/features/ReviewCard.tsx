@@ -10,6 +10,7 @@ import { useTranslations } from "next-intl";
 import Image from "next/image";
 import type { Database } from "@/types/supabase";
 import type { TMDBTVDetail } from "@/types/tmdb";
+import { getAvatarEmoji } from "@/lib/utils/avatar";
 
 type Review = Database["public"]["Tables"]["reviews"]["Row"] & {
   user_profiles: {
@@ -93,13 +94,22 @@ export function ReviewCard({ review, anime, locale = "ko" }: ReviewCardProps) {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 {review.user_profiles?.avatar_url ? (
-                  <Image
-                    src={review.user_profiles.avatar_url}
-                    alt={displayName}
-                    width={32}
-                    height={32}
-                    className="rounded-full object-cover"
-                  />
+                  (() => {
+                    const avatarEmoji = getAvatarEmoji(review.user_profiles.avatar_url);
+                    return avatarEmoji ? (
+                      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-zinc-800 text-xl">
+                        {avatarEmoji}
+                      </div>
+                    ) : (
+                      <Image
+                        src={review.user_profiles.avatar_url}
+                        alt={displayName}
+                        width={32}
+                        height={32}
+                        className="rounded-full object-cover"
+                      />
+                    );
+                  })()
                 ) : (
                   <div className="flex h-8 w-8 items-center justify-center rounded-full bg-zinc-800 text-zinc-400">
                     <User className="h-4 w-4" />

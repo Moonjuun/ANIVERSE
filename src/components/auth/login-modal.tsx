@@ -1,24 +1,25 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { createClient } from '@/lib/supabase/client';
-import { useModalStore } from '@/stores/useModalStore';
-import { useAuthStore } from '@/stores/useAuthStore';
-import { Button } from '@/components/ui/button';
-import { X } from 'lucide-react';
-import { cn } from '@/lib/utils/cn';
-import { useTranslations } from 'next-intl';
-import { Link } from '@/i18n/navigation';
-import { ROUTES } from '@/constants/routes';
+import { useState } from "react";
+import { createClient } from "@/lib/supabase/client";
+import { useModalStore } from "@/stores/useModalStore";
+import { useAuthStore } from "@/stores/useAuthStore";
+import { Button } from "@/components/ui/button";
+import { X } from "lucide-react";
+import { cn } from "@/lib/utils/cn";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
+import { ROUTES } from "@/constants/routes";
+import { checkEmailExists } from "@/actions/auth";
 
 export function LoginModal() {
-  const t = useTranslations('auth.signup');
+  const t = useTranslations("auth.signup");
   const { loginModalOpen, setLoginModalOpen } = useModalStore();
   const { setUser } = useAuthStore();
   const [isSignUp, setIsSignUp] = useState(false);
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [termsAgreed, setTermsAgreed] = useState(false);
@@ -33,7 +34,7 @@ export function LoginModal() {
 
     try {
       const { data, error: oauthError } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
+        provider: "google",
         options: {
           redirectTo: `${window.location.origin}/auth/callback`,
         },
@@ -41,7 +42,9 @@ export function LoginModal() {
 
       if (oauthError) throw oauthError;
     } catch (err) {
-      setError(err instanceof Error ? err.message : '소셜 로그인에 실패했습니다');
+      setError(
+        err instanceof Error ? err.message : "소셜 로그인에 실패했습니다"
+      );
       setLoading(false);
     }
   };
@@ -53,17 +56,17 @@ export function LoginModal() {
     // 회원가입 시 유효성 검사
     if (isSignUp) {
       if (!termsAgreed) {
-        setError('이용약관 및 개인정보 처리방침에 동의해주세요');
+        setError("이용약관 및 개인정보 처리방침에 동의해주세요");
         return;
       }
 
       if (password !== confirmPassword) {
-        setError('비밀번호가 일치하지 않습니다');
+        setError("비밀번호가 일치하지 않습니다");
         return;
       }
 
       if (password.length < 6) {
-        setError('비밀번호는 6자 이상이어야 합니다');
+        setError("비밀번호는 6자 이상이어야 합니다");
         return;
       }
     }
@@ -73,54 +76,124 @@ export function LoginModal() {
     try {
       if (isSignUp) {
         // 현재 locale 가져오기 (URL에서 추출)
-        const pathSegments = window.location.pathname.split('/').filter(Boolean);
-        const currentLocale = pathSegments[0] && ['ko', 'en', 'ja'].includes(pathSegments[0]) 
-          ? pathSegments[0] 
-          : 'ko';
-        
-        const { data, error: signUpError } = await supabase.auth.signUp({
-          email,
-          password,
-          options: {
-            emailRedirectTo: `${window.location.origin}/${currentLocale}/auth/confirm?next=/${currentLocale}`,
-            data: {
-              locale: currentLocale, // 이메일 템플릿에서 사용할 locale 정보
+        const pathSegments = window.location.pathname
+          .split("/")
+          .filter(Boolean);
+        const currentLocale =
+          pathSegments[0] && ["ko", "en", "ja"].includes(pathSegments[0])
+            ? pathSegments[0]
+            : "ko";
+
+        // 먼저 이메일이 이미 존재하는지 확인
+        const emailCheckResult = await checkEmailExists(email);
+        if (emailCheckResult.success && emailCheckResult.exists) {
+          setError(t("email_already_registered"));
+          setLoading(false);
+          return;
+        }
+
+        const { data: signUpData, error: signUpError } =
+          await supabase.auth.signUp({
+            email,
+            password,
+            options: {
+              emailRedirectTo: `${window.location.origin}/${currentLocale}/auth/confirm?next=/${currentLocale}`,
+              data: {
+                locale: currentLocale, // 이메일 템플릿에서 사용할 locale 정보
+              },
             },
-          },
-        });
+          });
 
         if (signUpError) {
           // 중복 이메일 가입 방지: Supabase가 자동으로 처리하지만 사용자 친화적인 메시지 제공
-          const errorMessage = signUpError.message?.toLowerCase() || '';
+          const errorMessage = signUpError.message?.toLowerCase() || "";
           if (
-            errorMessage.includes('already registered') ||
-            errorMessage.includes('user already exists') ||
-            errorMessage.includes('email already') ||
-            errorMessage.includes('already been registered') ||
+            errorMessage.includes("already registered") ||
+            errorMessage.includes("user already exists") ||
+            errorMessage.includes("email already") ||
+            errorMessage.includes("already been registered") ||
             signUpError.status === 422
           ) {
-            setError(t('email_already_registered'));
-          } else if (errorMessage.includes('invalid email') || errorMessage.includes('email format')) {
-            setError(t('invalid_email'));
-          } else if (errorMessage.includes('password') && errorMessage.includes('weak')) {
-            setError(t('weak_password'));
+            setError(t("email_already_registered"));
+          } else if (
+            errorMessage.includes("invalid email") ||
+            errorMessage.includes("email format")
+          ) {
+            setError(t("invalid_email"));
+          } else if (
+            errorMessage.includes("password") &&
+            errorMessage.includes("weak")
+          ) {
+            setError(t("weak_password"));
           } else {
-            setError(signUpError.message || t('signup_failed'));
+            setError(signUpError.message || t("signup_failed"));
           }
+          setLoading(false);
           return;
         }
-        
-        // 이메일 인증이 필요한 경우
-        if (data.user && !data.session) {
+
+        // signUp이 성공했지만 user가 없는 경우
+        if (!signUpData.user) {
+          setError(t("email_already_registered"));
+          setLoading(false);
+          return;
+        }
+
+        // 이미 이메일이 확인된 사용자인 경우 = 이미 가입된 이메일
+        if (signUpData.user.email_confirmed_at) {
+          setError(t("email_already_registered"));
+          setLoading(false);
+          return;
+        }
+
+        // signUp으로 반환된 사용자의 created_at을 확인하여 중복 가입 여부 판단
+        // 이미 가입된 이메일인 경우, signUp이 성공하더라도 기존 사용자 정보가 반환되므로
+        // created_at이 현재 시간과 멀리 떨어져 있음
+        const userCreatedAt = new Date(signUpData.user.created_at);
+        const now = new Date();
+        const secondsSinceCreation =
+          (now.getTime() - userCreatedAt.getTime()) / 1000;
+
+        // 디버깅을 위한 로그 (개발 환경에서만)
+        if (process.env.NODE_ENV === "development") {
+          console.log("SignUp Debug:", {
+            email,
+            userId: signUpData.user.id,
+            created_at: signUpData.user.created_at,
+            email_confirmed_at: signUpData.user.email_confirmed_at,
+            secondsSinceCreation,
+            hasSession: !!signUpData.session,
+          });
+        }
+
+        // 계정이 5초 이상 전에 생성된 경우 = 이미 가입된 이메일
+        // (새로운 가입은 방금 생성되므로 created_at이 현재 시간과 매우 가까움)
+        // 네트워크 지연 등을 고려하여 5초로 설정
+        if (secondsSinceCreation > 5) {
+          setError(t("email_already_registered"));
+          setLoading(false);
+          return;
+        }
+
+        // 이메일 인증이 필요한 경우 (새로운 가입)
+        // data.user가 있고, session이 없고, email_confirmed_at이 없고, 계정이 방금 생성된 경우만
+        if (
+          signUpData.user &&
+          !signUpData.session &&
+          !signUpData.user.email_confirmed_at &&
+          secondsSinceCreation <= 5
+        ) {
           // 이메일 인증 메일이 발송됨
           setEmailSent(true);
           setLoginModalOpen(false);
-          const { setEmailVerificationModalOpen, setEmailVerificationEmail } = useModalStore.getState();
+          const { setEmailVerificationModalOpen, setEmailVerificationEmail } =
+            useModalStore.getState();
           setEmailVerificationEmail(email);
           setEmailVerificationModalOpen(true);
+          setLoading(false);
           return;
         }
-        
+
         // 이메일 인증이 완료된 경우 (세션이 있는 경우)
         if (data.user && data.session) {
           setUser(data.user);
@@ -130,10 +203,11 @@ export function LoginModal() {
           setProfileSetupModalOpen(true);
         }
       } else {
-        const { data, error: signInError } = await supabase.auth.signInWithPassword({
-          email,
-          password,
-        });
+        const { data, error: signInError } =
+          await supabase.auth.signInWithPassword({
+            email,
+            password,
+          });
 
         if (signInError) throw signInError;
         if (data.user) {
@@ -142,12 +216,11 @@ export function LoginModal() {
         }
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : '오류가 발생했습니다');
+      setError(err instanceof Error ? err.message : "오류가 발생했습니다");
     } finally {
       setLoading(false);
     }
   };
-
 
   if (!loginModalOpen) return null;
 
@@ -158,8 +231,8 @@ export function LoginModal() {
     >
       <div
         className={cn(
-          'relative w-full max-w-md rounded-xl bg-zinc-900 p-6 shadow-xl',
-          'animate-in fade-in-0 zoom-in-95'
+          "relative w-full max-w-md rounded-xl bg-zinc-900 p-6 shadow-xl",
+          "animate-in fade-in-0 zoom-in-95"
         )}
         onClick={(e) => e.stopPropagation()}
       >
@@ -172,59 +245,61 @@ export function LoginModal() {
 
         <div className="mb-6 text-center">
           <h2 className="mb-2 text-2xl font-semibold text-white">
-            {isSignUp ? '회원가입' : t('title')}
+            {isSignUp ? "회원가입" : t("title")}
           </h2>
           <p className="text-sm text-zinc-400">
-            {isSignUp ? '이메일로 계정을 만들어보세요' : t('subtitle')}
+            {isSignUp ? "이메일로 계정을 만들어보세요" : t("subtitle")}
           </p>
         </div>
 
         <form onSubmit={handleSubmit} id="email-form" className="space-y-4">
-              <div>
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  placeholder="이메일"
-                  className="w-full rounded-lg bg-zinc-800 px-4 py-2 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
+          <div>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              placeholder="이메일"
+              className="w-full rounded-lg bg-zinc-800 px-4 py-2 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
 
-              <div>
-                <input
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  minLength={6}
-                  placeholder="비밀번호 (6자 이상)"
-                  className="w-full rounded-lg bg-zinc-800 px-4 py-2 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
+          <div>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              minLength={6}
+              placeholder="비밀번호 (6자 이상)"
+              className="w-full rounded-lg bg-zinc-800 px-4 py-2 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
 
-              {isSignUp && (
-                <div>
-                  <input
-                    type="password"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    required
-                    minLength={6}
-                    placeholder="비밀번호 확인"
-                    className="w-full rounded-lg bg-zinc-800 px-4 py-2 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                  {confirmPassword && password !== confirmPassword && (
-                    <p className="mt-1 text-xs text-rose-500">비밀번호가 일치하지 않습니다</p>
-                  )}
-                </div>
+          {isSignUp && (
+            <div>
+              <input
+                type="password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                required
+                minLength={6}
+                placeholder="비밀번호 확인"
+                className="w-full rounded-lg bg-zinc-800 px-4 py-2 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              {confirmPassword && password !== confirmPassword && (
+                <p className="mt-1 text-xs text-rose-500">
+                  비밀번호가 일치하지 않습니다
+                </p>
               )}
+            </div>
+          )}
 
-              {error && (
-                <div className="rounded-lg bg-rose-500/20 px-4 py-2 text-sm text-rose-500">
-                  {error}
-                </div>
-              )}
+          {error && (
+            <div className="rounded-lg bg-rose-500/20 px-4 py-2 text-sm text-rose-500">
+              {error}
+            </div>
+          )}
         </form>
 
         {/* 약관 동의 */}
@@ -238,23 +313,23 @@ export function LoginModal() {
                 className="mt-0.5 h-5 w-5 shrink-0 rounded border-zinc-600 bg-zinc-800 text-blue-600 focus:ring-2 focus:ring-blue-500"
               />
               <span className="text-sm text-zinc-300">
-                <span className="font-medium text-rose-500">(필수)</span>{' '}
+                <span className="font-medium text-rose-500">(필수)</span>{" "}
                 <Link
                   href={ROUTES.TERMS()}
                   className="font-medium text-blue-500 underline-offset-2 hover:underline"
                   target="_blank"
                   onClick={(e) => e.stopPropagation()}
                 >
-                  {t('terms_link')}
+                  {t("terms_link")}
                 </Link>
-                {' 및 '}
+                {" 및 "}
                 <Link
                   href={ROUTES.PRIVACY()}
                   className="font-medium text-blue-500 underline-offset-2 hover:underline"
                   target="_blank"
                   onClick={(e) => e.stopPropagation()}
                 >
-                  {t('privacy_link')}
+                  {t("privacy_link")}
                 </Link>
                 에 동의합니다
               </span>
@@ -268,8 +343,8 @@ export function LoginModal() {
                 className="mt-0.5 h-5 w-5 shrink-0 rounded border-zinc-600 bg-zinc-800 text-blue-600 focus:ring-2 focus:ring-blue-500"
               />
               <span className="text-sm text-zinc-400">
-                <span className="font-medium text-zinc-500">(선택)</span>{' '}
-                {t('marketing_optional')}
+                <span className="font-medium text-zinc-500">(선택)</span>{" "}
+                {t("marketing_optional")}
               </span>
             </label>
           </div>
@@ -282,13 +357,13 @@ export function LoginModal() {
           className="mt-6 w-full"
           disabled={loading}
         >
-          {loading ? '처리 중...' : isSignUp ? '회원가입' : '로그인'}
+          {loading ? "처리 중..." : isSignUp ? "회원가입" : "로그인"}
         </Button>
 
         {/* OR 구분선 */}
         <div className="my-6 flex items-center gap-4">
           <div className="h-px flex-1 bg-zinc-700" />
-          <span className="text-sm text-zinc-500">{t('or')}</span>
+          <span className="text-sm text-zinc-500">{t("or")}</span>
           <div className="h-px flex-1 bg-zinc-700" />
         </div>
 
@@ -299,7 +374,7 @@ export function LoginModal() {
           onClick={handleGoogleLogin}
           disabled={loading}
         >
-          {t('continue_with_google')}
+          {t("continue_with_google")}
         </Button>
 
         {/* 전환 링크 */}
@@ -308,15 +383,16 @@ export function LoginModal() {
             onClick={() => {
               setIsSignUp(!isSignUp);
               setError(null);
-              setConfirmPassword('');
+              setConfirmPassword("");
             }}
             className="text-zinc-400 hover:text-blue-500 transition-colors"
           >
-            {isSignUp ? '이미 계정이 있으신가요? 로그인' : '계정이 없으신가요? 회원가입'}
+            {isSignUp
+              ? "이미 계정이 있으신가요? 로그인"
+              : "계정이 없으신가요? 회원가입"}
           </button>
         </div>
       </div>
     </div>
   );
 }
-

@@ -10,7 +10,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "seed": "node scripts/seed-data.js"
+    "seed": "node scripts/seed-data.js",
+    "generate-fake-users": "node scripts/generate-fake-users.js"
   },
   "dependencies": {
     "@hookform/resolvers": "5.2.2",

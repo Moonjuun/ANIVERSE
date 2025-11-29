@@ -12,6 +12,7 @@ import { ROUTES } from "@/constants/routes";
 import { createClient } from "@/lib/supabase/server";
 import { ReviewActions } from "@/components/features/ReviewActions";
 import { StructuredData } from "@/components/features/StructuredData";
+import { getAvatarEmoji } from "@/lib/utils/avatar";
 
 export async function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
@@ -231,13 +232,22 @@ export default async function ReviewDetailPage({
         {/* 작성자 정보 */}
         <div className="mb-8 flex items-center gap-4 rounded-xl bg-zinc-900 p-6">
           {(review.user_profiles as any)?.avatar_url ? (
-            <Image
-              src={(review.user_profiles as any).avatar_url}
-              alt={displayName}
-              width={64}
-              height={64}
-              className="rounded-full object-cover"
-            />
+            (() => {
+              const avatarEmoji = getAvatarEmoji((review.user_profiles as any).avatar_url);
+              return avatarEmoji ? (
+                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-zinc-800 text-4xl">
+                  {avatarEmoji}
+                </div>
+              ) : (
+                <Image
+                  src={(review.user_profiles as any).avatar_url}
+                  alt={displayName}
+                  width={64}
+                  height={64}
+                  className="rounded-full object-cover"
+                />
+              );
+            })()
           ) : (
             <div className="flex h-16 w-16 items-center justify-center rounded-full bg-zinc-800 text-zinc-400">
               <User className="h-8 w-8" />

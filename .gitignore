@@ -42,3 +42,6 @@ next-env.d.ts
 
 # Supabase MCP 임시 파일
 supabase/.temp/
+
+# MCP 설정 파일 (민감한 정보 포함)
+.cursor/mcp.json

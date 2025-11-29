@@ -11,6 +11,7 @@ import { notFound, redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import Image from "next/image";
 import { User, Mail, Calendar } from "lucide-react";
+import { AVATARS } from "@/lib/utils/avatars";
 
 export async function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
@@ -76,6 +77,18 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
   const displayName =
     profile.display_name || profile.username || user.email?.split("@")[0] || "User";
 
+  // 아바타 이모지 추출 (emoji: 형식인 경우)
+  const getAvatarEmoji = (avatarUrl: string | null): string | null => {
+    if (!avatarUrl || !avatarUrl.startsWith('emoji:')) {
+      return null;
+    }
+    const avatarId = avatarUrl.replace('emoji:', '');
+    const avatar = AVATARS.find(a => a.id === avatarId);
+    return avatar ? avatar.emoji : null;
+  };
+
+  const avatarEmoji = getAvatarEmoji(profile.avatar_url);
+
   return (
     <main className="mx-auto max-w-7xl px-4 py-12 md:px-6 lg:px-8">
       <div className="mb-8">
@@ -90,13 +103,19 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
           <div className="rounded-xl bg-zinc-900 p-6">
             <div className="mb-6 flex flex-col items-center text-center">
               {profile.avatar_url ? (
-                <Image
-                  src={profile.avatar_url}
-                  alt={displayName}
-                  width={120}
-                  height={120}
-                  className="mb-4 rounded-full object-cover"
-                />
+                avatarEmoji ? (
+                  <div className="mb-4 flex h-30 w-30 items-center justify-center rounded-full bg-zinc-800 text-5xl">
+                    {avatarEmoji}
+                  </div>
+                ) : (
+                  <Image
+                    src={profile.avatar_url}
+                    alt={displayName}
+                    width={120}
+                    height={120}
+                    className="mb-4 rounded-full object-cover"
+                  />
+                )
               ) : (
                 <div className="mb-4 flex h-30 w-30 items-center justify-center rounded-full bg-zinc-800 text-4xl text-zinc-400">
                   {displayName.charAt(0).toUpperCase()}

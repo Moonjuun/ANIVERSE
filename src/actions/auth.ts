@@ -6,6 +6,58 @@ import { revalidatePath } from 'next/cache';
 import { Database } from '@/types/supabase';
 
 /**
+ * 이메일이 이미 가입되어 있는지 확인
+ */
+export async function checkEmailExists(email: string) {
+  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!serviceRoleKey) {
+    return {
+      success: false,
+      exists: false,
+      error: '서버 설정 오류',
+    };
+  }
+
+  try {
+    const supabaseAdmin = createAdminClient<Database>(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      serviceRoleKey,
+      {
+        auth: {
+          autoRefreshToken: false,
+          persistSession: false,
+        },
+      }
+    );
+
+    // Admin API로 사용자 목록에서 이메일 검색
+    const { data, error } = await supabaseAdmin.auth.admin.listUsers();
+    
+    if (error) {
+      return {
+        success: false,
+        exists: false,
+        error: error.message,
+      };
+    }
+
+    const userExists = data.users.some(user => user.email === email);
+
+    return {
+      success: true,
+      exists: userExists,
+    };
+  } catch (error) {
+    console.error('Check email exists error:', error);
+    return {
+      success: false,
+      exists: false,
+      error: error instanceof Error ? error.message : '알 수 없는 오류',
+    };
+  }
+}
+
+/**
  * 회원탈퇴
  * 사용자 계정과 관련된 모든 데이터를 삭제합니다.
  */
@@ -113,4 +165,3 @@ export async function deleteAccount() {
     };
   }
 }
-
