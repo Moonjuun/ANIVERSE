@@ -36,60 +36,53 @@ export function ReviewListClient({
 }: ReviewListClientProps) {
   const loadMoreRef = useRef<HTMLDivElement>(null);
 
-  const {
-    data,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-    status,
-  } = useInfiniteQuery({
-    queryKey: ["reviews-list", locale, language],
-    queryFn: async ({ pageParam = 1 }) => {
-      const result = await getAllReviews(pageParam, 20);
-      if (!result.success) {
-        throw new Error(result.error);
-      }
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, status } =
+    useInfiniteQuery({
+      queryKey: ["reviews-list", locale, language],
+      queryFn: async ({ pageParam = 1 }) => {
+        const result = await getAllReviews(pageParam, 20);
+        if (!result.success) {
+          throw new Error(result.error);
+        }
 
-      // 애니메이션 정보 가져오기
-      const animePromises = result.data.map((review) =>
-        tmdbClient
-          .getTVDetail(review.anime_id, language)
-          .catch(() => null)
-      );
+        // 애니메이션 정보 가져오기
+        const animePromises = result.data.map((review) =>
+          tmdbClient.getTVDetail(review.anime_id, language).catch(() => null)
+        );
 
-      const animeResults = await Promise.all(animePromises);
-      const animes = animeResults.filter(
-        (anime): anime is TMDBTVDetail => anime !== null
-      );
+        const animeResults = await Promise.all(animePromises);
+        const animes = animeResults.filter(
+          (anime): anime is TMDBTVDetail => anime !== null
+        );
 
-      return {
-        reviews: result.data,
-        animes,
-        total: result.total,
-        page: result.page,
-        totalPages: result.totalPages,
-      };
-    },
-    initialPageParam: 1,
-    getNextPageParam: (lastPage) => {
-      if (lastPage.page < lastPage.totalPages) {
-        return lastPage.page + 1;
-      }
-      return undefined;
-    },
-    initialData: {
-      pages: [
-        {
-          reviews: initialData.reviews as any,
-          animes: initialData.animes || [],
-          total: initialData.total,
-          page: initialData.page,
-          totalPages: initialData.totalPages,
-        },
-      ],
-      pageParams: [1],
-    },
-  });
+        return {
+          reviews: result.data,
+          animes,
+          total: result.total,
+          page: result.page,
+          totalPages: result.totalPages,
+        };
+      },
+      initialPageParam: 1,
+      getNextPageParam: (lastPage) => {
+        if (lastPage.page < lastPage.totalPages) {
+          return lastPage.page + 1;
+        }
+        return undefined;
+      },
+      initialData: {
+        pages: [
+          {
+            reviews: initialData.reviews,
+            animes: initialData.animes || [],
+            total: initialData.total,
+            page: initialData.page,
+            totalPages: initialData.totalPages,
+          },
+        ],
+        pageParams: [1],
+      },
+    });
 
   // 첫 페이지의 애니메이션 정보 로드 (서버에서 이미 전달되므로 이제는 필요 없지만, 폴백으로 유지)
   useEffect(() => {
@@ -98,7 +91,7 @@ export function ReviewListClient({
         const animePromises = data.pages[0].reviews.map((review: Review) =>
           tmdbClient.getTVDetail(review.anime_id, language).catch(() => null)
         );
-        const animes = await Promise.all(animePromises);
+        await Promise.all(animePromises);
         // 이 부분은 실제로는 쿼리를 다시 fetch해야 하지만,
         // 간단하게 하기 위해 첫 페이지만 처리
       };
@@ -131,17 +124,15 @@ export function ReviewListClient({
 
   // 모든 페이지의 결과를 합치기
   const allReviews: Array<{
-    review: any;
+    review: Review;
     anime: TMDBTVDetail | null;
   }> = [];
 
   data?.pages.forEach((page) => {
     // 애니메이션을 anime_id로 매핑
-    const animeMap = new Map(
-      page.animes.map((anime) => [anime.id, anime])
-    );
+    const animeMap = new Map(page.animes.map((anime) => [anime.id, anime]));
 
-    page.reviews.forEach((review: any) => {
+    page.reviews.forEach((review: Review) => {
       allReviews.push({
         review,
         anime: animeMap.get(review.anime_id) || null,
@@ -193,4 +184,3 @@ export function ReviewListClient({
     </div>
   );
 }
-

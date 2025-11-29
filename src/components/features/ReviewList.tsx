@@ -1,13 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { getReviews, deleteReview, type getReviews as GetReviewsType } from "@/actions/review";
+import { useState, useEffect, useCallback } from "react";
+import { getReviews, deleteReview } from "@/actions/review";
 import { Button } from "@/components/ui/button";
 import { Star, Trash2, Edit2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useToast } from "@/lib/utils/toast";
 import { useAuthStore } from "@/stores/useAuthStore";
-import { cn } from "@/lib/utils/cn";
+import Image from "next/image";
 import type { Database } from "@/types/supabase";
 
 type Review = Database["public"]["Tables"]["reviews"]["Row"] & {
@@ -33,18 +33,20 @@ export function ReviewList({ animeId, onEdit, refreshKey }: ReviewListProps) {
   const [loading, setLoading] = useState(true);
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
-  useEffect(() => {
-    loadReviews();
-  }, [animeId, refreshKey]);
-
-  const loadReviews = async () => {
+  const loadReviews = useCallback(async () => {
     setLoading(true);
     const result = await getReviews(animeId);
     if (result.success && result.data) {
       setReviews(result.data as Review[]);
     }
     setLoading(false);
-  };
+  }, [animeId]);
+
+  useEffect(() => {
+    // 데이터 페칭을 위한 useEffect 사용 (일반적인 패턴)
+    void loadReviews();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [animeId, refreshKey]);
 
   const handleDelete = async (reviewId: string) => {
     if (!confirm(t("delete_confirm"))) {
@@ -67,10 +69,7 @@ export function ReviewList({ animeId, onEdit, refreshKey }: ReviewListProps) {
     return (
       <div className="space-y-4">
         {[1, 2, 3].map((i) => (
-          <div
-            key={i}
-            className="animate-pulse rounded-xl bg-zinc-900 p-6"
-          >
+          <div key={i} className="animate-pulse rounded-xl bg-zinc-900 p-6">
             <div className="h-4 w-1/4 rounded bg-zinc-800" />
             <div className="mt-2 h-4 w-full rounded bg-zinc-800" />
             <div className="mt-2 h-4 w-3/4 rounded bg-zinc-800" />
@@ -106,9 +105,11 @@ export function ReviewList({ animeId, onEdit, refreshKey }: ReviewListProps) {
             <div className="mb-4 flex items-start justify-between">
               <div className="flex items-center gap-3">
                 {review.user_profiles?.avatar_url ? (
-                  <img
+                  <Image
                     src={review.user_profiles.avatar_url}
                     alt={displayName}
+                    width={40}
+                    height={40}
                     className="h-10 w-10 rounded-full object-cover"
                   />
                 ) : (
@@ -191,4 +192,3 @@ export function ReviewList({ animeId, onEdit, refreshKey }: ReviewListProps) {
     </div>
   );
 }
-
