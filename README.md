@@ -115,15 +115,6 @@ src/
 
 자세한 내용은 [supabase/README.md](./supabase/README.md)를 참고하세요.
 
-## 🌱 가데이터 삽입
-
-테스트용 가데이터를 삽입하려면:
-
-```bash
-npm run seed
-```
-
-또는 Supabase Dashboard의 SQL Editor에서 `supabase/seed_data.sql` 파일을 실행하세요.
 
 ## 📝 스크립트
 
@@ -131,7 +122,6 @@ npm run seed
 - `npm run build`: 프로덕션 빌드
 - `npm run start`: 프로덕션 서버 실행
 - `npm run lint`: ESLint 실행
-- `npm run seed`: 가데이터 삽입
 
 ## 🚢 배포
 
