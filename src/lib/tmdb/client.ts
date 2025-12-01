@@ -287,6 +287,65 @@ class TMDBClient {
   getBackdropURL(path: string | null): string {
     return this.getImageURL(path, "w780");
   }
+
+  /**
+   * 추천 애니메이션 가져오기 (Ani-Lab 추천 애니용)
+   * 최대 3개 반환
+   */
+  async getRecommendations(
+    genres: string,
+    fromDate: string,
+    toDate: string,
+    sortBy: string,
+    language: string = "ko-KR",
+    count: number = 3
+  ): Promise<TMDBTVShow[]> {
+    const params: Record<string, string | number> = {
+      page: 1,
+      language,
+      with_genres: `16,${genres}`, // 애니메이션 장르(16) + 선택한 장르
+      "first_air_date.gte": fromDate,
+      "first_air_date.lte": toDate,
+      sort_by: sortBy,
+      with_origin_country: "JP", // 일본 애니메이션 한정
+      "vote_count.gte": 100, // 검증된 작품만
+    };
+
+    try {
+      const response = await this.fetch<TMDBResponse<TMDBTVShow>>(
+        "/discover/tv",
+        params,
+        false
+      );
+
+      // 결과가 있으면 포스터/백드롭이 있는 것만 필터링
+      if (response.results && response.results.length > 0) {
+        const candidates = response.results.filter(
+          (anime) => anime.poster_path || anime.backdrop_path
+        );
+
+        if (candidates.length === 0) {
+          return [];
+        }
+
+        // 중복 제거 및 랜덤 셔플
+        const uniqueCandidates = Array.from(
+          new Map(candidates.map((item) => [item.id, item])).values()
+        );
+
+        // 랜덤으로 섞기
+        const shuffled = uniqueCandidates.sort(() => Math.random() - 0.5);
+
+        // 요청한 개수만큼 반환 (최대 3개)
+        return shuffled.slice(0, Math.min(count, 3));
+      }
+
+      return [];
+    } catch (error) {
+      console.error("getRecommendations error:", error);
+      return [];
+    }
+  }
 }
 
 // 싱글톤 인스턴스
