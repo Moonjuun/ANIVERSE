@@ -6,6 +6,7 @@ import { useRouter } from "@/i18n/navigation";
 import Image from "next/image";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { FavoriteButton } from "@/components/features/FavoriteButton";
 import { ROUTES } from "@/constants/routes";
 import type { TMDBTVShow } from "@/types/tmdb";
 import { tmdbClient } from "@/lib/tmdb/client";
@@ -373,7 +374,7 @@ export function RecommendationWizard({ locale }: RecommendationWizardProps) {
                   return (
                     <Card
                       key={anime.id}
-                      className="cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:bg-zinc-800"
+                      className="group relative cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:bg-zinc-800"
                       onClick={() => router.push(ROUTES.ANIME.DETAIL(anime.id))}
                     >
                       <CardContent className="p-4">
@@ -385,6 +386,18 @@ export function RecommendationWizard({ locale }: RecommendationWizardProps) {
                             className="object-cover"
                             sizes="(max-width: 768px) 100vw, 33vw"
                           />
+                          {/* 찜하기 버튼 - 오버레이 */}
+                          <div
+                            className="absolute right-2 top-2 z-10"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            <FavoriteButton
+                              animeId={anime.id}
+                              variant="icon"
+                              size="sm"
+                              className="bg-zinc-900/80 backdrop-blur-sm hover:bg-zinc-800/90"
+                            />
+                          </div>
                         </div>
                         <h3 className="mb-2 line-clamp-2 text-lg font-bold text-white">
                           {anime.name}
