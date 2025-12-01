@@ -34,6 +34,12 @@ class TMDBClient {
     params?: Record<string, string | number>,
     isClient: boolean = false
   ): Promise<T> {
+    if (!this.accessToken) {
+      throw new Error(
+        "TMDB_ACCESS_TOKEN is not set. Please configure the environment variable."
+      );
+    }
+
     const searchParams = new URLSearchParams(
       Object.fromEntries(
         Object.entries(params || {}).map(([k, v]) => [k, String(v)])
@@ -58,7 +64,22 @@ class TMDBClient {
       };
     }
 
-    const response = await fetch(url, fetchOptions);
+    let response: Response;
+    try {
+      response = await fetch(url, fetchOptions);
+    } catch (fetchError) {
+      // 네트워크 에러 등
+      console.error("[TMDBClient] Fetch error:", {
+        endpoint,
+        error:
+          fetchError instanceof Error ? fetchError.message : String(fetchError),
+      });
+      throw new Error(
+        `TMDB API network error: ${
+          fetchError instanceof Error ? fetchError.message : String(fetchError)
+        }`
+      );
+    }
 
     if (!response.ok) {
       const errorText = await response.text();
@@ -66,12 +87,37 @@ class TMDBClient {
       if (response.status === 404) {
         throw new Error("NOT_FOUND");
       }
+
+      // 401 Unauthorized는 환경 변수 문제일 가능성 높음
+      if (response.status === 401) {
+        console.error("[TMDBClient] Unauthorized - Check TMDB_ACCESS_TOKEN:", {
+          endpoint,
+          status: response.status,
+        });
+        throw new Error(
+          `TMDB API unauthorized (401): Please check TMDB_ACCESS_TOKEN environment variable`
+        );
+      }
+
       throw new Error(
         `TMDB API error: ${response.status} ${response.statusText} - ${errorText}`
       );
     }
 
-    return response.json();
+    try {
+      return await response.json();
+    } catch (jsonError) {
+      console.error("[TMDBClient] JSON parse error:", {
+        endpoint,
+        error:
+          jsonError instanceof Error ? jsonError.message : String(jsonError),
+      });
+      throw new Error(
+        `TMDB API response parse error: ${
+          jsonError instanceof Error ? jsonError.message : String(jsonError)
+        }`
+      );
+    }
   }
 
   /**

@@ -217,13 +217,22 @@ export async function resetPasswordForEmail(
       ? userLocale
       : "ko";
 
-    // redirectTo URL에 locale 포함
-    // 환경 변수에서 사이트 URL 가져오기 (없으면 localhost 사용)
+    // 현재 요청의 호스트 정보 가져오기
+    const { headers } = await import("next/headers");
+    const headersList = await headers();
+    const host = headersList.get("host");
+    const protocol =
+      headersList.get("x-forwarded-proto") ||
+      (process.env.NODE_ENV === "production" ? "https" : "http");
+
+    // 사이트 URL 결정: 환경 변수 > 현재 요청 호스트 > Vercel URL > localhost
     const siteUrl =
       process.env.NEXT_PUBLIC_SITE_URL ||
+      (host ? `${protocol}://${host}` : null) ||
       (process.env.VERCEL_URL
         ? `https://${process.env.VERCEL_URL}`
         : "http://localhost:3000");
+
     const redirectTo = `${siteUrl}/${validLocale}/auth/reset-password`;
 
     // Server Action에서 비밀번호 재설정 이메일 전송

@@ -28,64 +28,82 @@ export async function generateMetadata({
 }: {
   params: Promise<{ locale: string; id: string }>;
 }): Promise<Metadata> {
-  const { locale, id } = await params;
-
-  // 언어 매핑
-  const languageMap: Record<string, string> = {
-    ko: "ko-KR",
-    en: "en-US",
-    ja: "ja-JP",
-  };
-  const language = languageMap[locale] || "ko-KR";
-
   try {
-    const anime = await tmdbClient.getTVDetail(Number(id), language);
-    const title = `${anime.name} | AniVerse`;
-    const description =
-      anime.overview || `${anime.name}에 대한 정보와 리뷰를 확인해보세요.`;
-    const posterUrl = tmdbClient.getPosterURL(anime.poster_path);
-    const genres = anime.genres.map((g) => g.name).join(", ");
-    const ogImageUrl = `/api/og?title=${encodeURIComponent(
-      anime.name
-    )}&rating=${anime.vote_average.toFixed(1)}&poster=${encodeURIComponent(
-      posterUrl
-    )}`;
+    const { locale, id } = await params;
 
-    return {
-      title,
-      description,
-      keywords: [
-        anime.name,
-        anime.original_name,
-        genres,
-        "애니메이션",
-        "anime",
-        "리뷰",
-        "review",
-      ],
-      openGraph: {
-        title,
-        description,
-        type: "video.tv_show",
-        locale: locale === "ko" ? "ko_KR" : locale === "ja" ? "ja_JP" : "en_US",
-        siteName: "AniVerse",
-        images: [
-          {
-            url: ogImageUrl,
-            width: 1200,
-            height: 630,
-            alt: anime.name,
-          },
-        ],
-      },
-      twitter: {
-        card: "summary_large_image",
-        title,
-        description,
-        images: [ogImageUrl],
-      },
+    // 언어 매핑
+    const languageMap: Record<string, string> = {
+      ko: "ko-KR",
+      en: "en-US",
+      ja: "ja-JP",
     };
-  } catch {
+    const language = languageMap[locale] || "ko-KR";
+
+    try {
+      const anime = await tmdbClient.getTVDetail(Number(id), language);
+      const title = `${anime.name} | AniVerse`;
+      const description =
+        anime.overview || `${anime.name}에 대한 정보와 리뷰를 확인해보세요.`;
+      const posterUrl = tmdbClient.getPosterURL(anime.poster_path);
+      const genres = anime.genres.map((g) => g.name).join(", ");
+      const ogImageUrl = `/api/og?title=${encodeURIComponent(
+        anime.name
+      )}&rating=${anime.vote_average.toFixed(1)}&poster=${encodeURIComponent(
+        posterUrl
+      )}`;
+
+      return {
+        title,
+        description,
+        keywords: [
+          anime.name,
+          anime.original_name,
+          genres,
+          "애니메이션",
+          "anime",
+          "리뷰",
+          "review",
+        ],
+        openGraph: {
+          title,
+          description,
+          type: "video.tv_show",
+          locale:
+            locale === "ko" ? "ko_KR" : locale === "ja" ? "ja_JP" : "en_US",
+          siteName: "AniVerse",
+          images: [
+            {
+              url: ogImageUrl,
+              width: 1200,
+              height: 630,
+              alt: anime.name,
+            },
+          ],
+        },
+        twitter: {
+          card: "summary_large_image",
+          title,
+          description,
+          images: [ogImageUrl],
+        },
+      };
+    } catch (error) {
+      // 운영 환경에서도 에러를 로깅하되, 메타데이터는 기본값 반환
+      console.error(`[generateMetadata] Failed to fetch anime ${id}:`, {
+        error: error instanceof Error ? error.message : String(error),
+        locale,
+        id,
+      });
+      return {
+        title: "애니메이션 상세 | AniVerse",
+        description: "애니메이션 정보를 불러올 수 없습니다.",
+      };
+    }
+  } catch (error) {
+    // params 파싱 실패 등 최상위 에러 처리
+    console.error("[generateMetadata] Unexpected error:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return {
       title: "애니메이션 상세 | AniVerse",
       description: "애니메이션 정보를 불러올 수 없습니다.",
@@ -100,8 +118,31 @@ interface AnimeDetailPageProps {
 export default async function AnimeDetailPage({
   params,
 }: AnimeDetailPageProps) {
-  const { locale, id } = await params;
-  const t = await getTranslations("anime.detail");
+  let locale: string;
+  let id: string;
+  let t: Awaited<ReturnType<typeof getTranslations>>;
+
+  try {
+    const resolvedParams = await params;
+    locale = resolvedParams.locale;
+    id = resolvedParams.id;
+  } catch (error) {
+    console.error("[AnimeDetailPage] Failed to resolve params:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
+    notFound();
+  }
+
+  try {
+    t = await getTranslations("anime.detail");
+  } catch (error) {
+    console.error("[AnimeDetailPage] Failed to load translations:", {
+      error: error instanceof Error ? error.message : String(error),
+      locale,
+    });
+    // 번역 실패 시 기본 번역 함수 생성 (fallback)
+    t = ((key: string) => key) as typeof t;
+  }
 
   // 언어 매핑
   const languageMap: Record<string, string> = {
@@ -122,7 +163,7 @@ export default async function AnimeDetailPage({
     [anime, watchProviders, tmdbReviews] = await Promise.all([
       tmdbClient.getTVDetail(Number(id), language),
       tmdbClient.getTVWatchProviders(Number(id), language).catch(() => null),
-      tmdbClient.getTVReviews(Number(id), 1, language),
+      tmdbClient.getTVReviews(Number(id), 1, language).catch(() => null),
     ]);
 
     // AniList 리뷰 가져오기 (비동기, 실패해도 계속 진행)
@@ -145,11 +186,24 @@ export default async function AnimeDetailPage({
         }
       }
     } catch (anilistError) {
-      console.warn("AniList API Error:", anilistError);
+      console.warn("AniList API Error:", {
+        error:
+          anilistError instanceof Error
+            ? anilistError.message
+            : String(anilistError),
+        animeId: id,
+      });
       // AniList 에러는 무시하고 계속 진행
     }
   } catch (error) {
-    console.error("TMDB API Error:", error);
+    console.error("[AnimeDetailPage] TMDB API Error:", {
+      error: error instanceof Error ? error.message : String(error),
+      errorStack: error instanceof Error ? error.stack : undefined,
+      animeId: id,
+      locale,
+      language,
+      hasAccessToken: !!process.env.TMDB_ACCESS_TOKEN,
+    });
     notFound();
   }
 
