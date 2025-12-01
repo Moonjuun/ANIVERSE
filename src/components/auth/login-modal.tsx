@@ -5,7 +5,7 @@ import { createClient } from "@/lib/supabase/client";
 import { useModalStore } from "@/stores/useModalStore";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { Button } from "@/components/ui/button";
-import { X } from "lucide-react";
+import { X, ArrowLeft } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
@@ -25,6 +25,8 @@ export function LoginModal() {
   const [termsAgreed, setTermsAgreed] = useState(false);
   const [marketingAgreed, setMarketingAgreed] = useState(false);
   const [emailSent, setEmailSent] = useState(false);
+  const [passwordResetSent, setPasswordResetSent] = useState(false);
+  const [isPasswordReset, setIsPasswordReset] = useState(false);
 
   const supabase = createClient();
 
@@ -45,6 +47,45 @@ export function LoginModal() {
       setError(
         err instanceof Error ? err.message : "소셜 로그인에 실패했습니다"
       );
+      setLoading(false);
+    }
+  };
+
+  const handlePasswordReset = async () => {
+    if (!email) {
+      setError("이메일을 입력해주세요");
+      return;
+    }
+
+    setError(null);
+    setLoading(true);
+
+    try {
+      // 현재 locale 가져오기
+      const pathSegments = window.location.pathname.split("/").filter(Boolean);
+      const currentLocale =
+        pathSegments[0] && ["ko", "en", "ja"].includes(pathSegments[0])
+          ? pathSegments[0]
+          : "ko";
+
+      // Server Action을 통해 비밀번호 재설정 이메일 전송 (locale 정보 포함)
+      const { resetPasswordForEmail } = await import("@/actions/auth");
+      const result = await resetPasswordForEmail(email, currentLocale);
+
+      if (!result.success) {
+        throw new Error(
+          result.error || "비밀번호 재설정 이메일 전송에 실패했습니다"
+        );
+      }
+
+      setPasswordResetSent(true);
+    } catch (err) {
+      setError(
+        err instanceof Error
+          ? err.message
+          : "비밀번호 재설정 이메일 전송에 실패했습니다"
+      );
+    } finally {
       setLoading(false);
     }
   };
@@ -100,6 +141,7 @@ export function LoginModal() {
               emailRedirectTo: `${window.location.origin}/${currentLocale}/auth/confirm?next=/${currentLocale}`,
               data: {
                 locale: currentLocale, // 이메일 템플릿에서 사용할 locale 정보
+                marketing_agreed: marketingAgreed, // 마케팅 동의 정보 저장
               },
             },
           });
@@ -209,14 +251,42 @@ export function LoginModal() {
             password,
           });
 
-        if (signInError) throw signInError;
+        if (signInError) {
+          // Supabase 에러 메시지를 다국어로 변환
+          const errorMessage = signInError.message?.toLowerCase() || "";
+          if (
+            errorMessage.includes("invalid login credentials") ||
+            errorMessage.includes("invalid credentials") ||
+            errorMessage.includes("email not confirmed") ||
+            signInError.status === 400
+          ) {
+            throw new Error(t("invalid_credentials"));
+          } else if (errorMessage.includes("email")) {
+            throw new Error(t("invalid_email"));
+          } else {
+            throw signInError;
+          }
+        }
         if (data.user) {
           setUser(data.user);
           setLoginModalOpen(false);
         }
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "오류가 발생했습니다");
+      // 이미 번역된 메시지인지 확인
+      const errorMessage = err instanceof Error ? err.message : "오류가 발생했습니다";
+      // 번역 키가 아닌 경우 기본 에러 메시지 사용
+      if (
+        errorMessage.includes("invalid login credentials") ||
+        errorMessage.includes("Invalid login credentials")
+      ) {
+        setError(t("invalid_credentials"));
+      } else if (errorMessage === t("invalid_credentials") || errorMessage === t("invalid_email")) {
+        // 이미 번역된 메시지
+        setError(errorMessage);
+      } else {
+        setError(errorMessage || t("login_failed"));
+      }
     } finally {
       setLoading(false);
     }
@@ -237,44 +307,140 @@ export function LoginModal() {
         onClick={(e) => e.stopPropagation()}
       >
         <button
-          onClick={() => setLoginModalOpen(false)}
-          className="absolute right-4 top-4 text-zinc-400 hover:text-white"
+          onClick={() => {
+            if (isPasswordReset) {
+              setIsPasswordReset(false);
+              setPasswordResetSent(false);
+              setError(null);
+            } else {
+              setLoginModalOpen(false);
+            }
+          }}
+          className="absolute right-4 top-4 text-zinc-400 hover:text-white transition-colors"
         >
           <X className="h-5 w-5" />
         </button>
 
+        {isPasswordReset && (
+          <button
+            onClick={() => {
+              setIsPasswordReset(false);
+              setPasswordResetSent(false);
+              setError(null);
+            }}
+            className="absolute left-4 top-4 flex items-center gap-2 text-zinc-400 hover:text-white transition-colors"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            <span className="text-sm">{t("back") || "뒤로"}</span>
+          </button>
+        )}
+
         <div className="mb-6 text-center">
           <h2 className="mb-2 text-2xl font-semibold text-white">
-            {isSignUp ? "회원가입" : t("title")}
+            {isPasswordReset
+              ? t("reset_password_title") || "비밀번호 찾기"
+              : isSignUp
+              ? "회원가입"
+              : t("title")}
           </h2>
           <p className="text-sm text-zinc-400">
-            {isSignUp ? "이메일로 계정을 만들어보세요" : t("subtitle")}
+            {isPasswordReset
+              ? t("reset_password_subtitle") ||
+                "이메일 주소를 입력하시면 비밀번호 재설정 링크를 보내드립니다"
+              : isSignUp
+              ? "이메일로 계정을 만들어보세요"
+              : t("subtitle")}
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} id="email-form" className="space-y-4">
-          <div>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              placeholder="이메일"
-              className="w-full rounded-lg bg-zinc-800 px-4 py-2 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
+        {/* 비밀번호 찾기 화면 */}
+        {isPasswordReset ? (
+          <div className="space-y-4">
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                handlePasswordReset();
+              }}
+              className="space-y-4"
+            >
+              <div>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  placeholder={t("email_placeholder") || "이메일 주소"}
+                  className="w-full rounded-lg bg-zinc-800 px-4 py-2 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  disabled={passwordResetSent || loading}
+                />
+              </div>
 
-          <div>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              minLength={6}
-              placeholder="비밀번호 (6자 이상)"
-              className="w-full rounded-lg bg-zinc-800 px-4 py-2 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
+              {passwordResetSent && (
+                <div className="rounded-lg bg-emerald-500/20 px-4 py-3 text-sm text-emerald-500">
+                  <p className="font-medium mb-1">{t("password_reset_email_sent")}</p>
+                  <p className="text-xs text-emerald-400">
+                    {t("password_reset_instruction") ||
+                      "이메일을 확인하고 링크를 클릭하여 비밀번호를 재설정하세요."}
+                  </p>
+                </div>
+              )}
+
+              {error && (
+                <div className="rounded-lg bg-rose-500/20 px-4 py-2 text-sm text-rose-500">
+                  {error}
+                </div>
+              )}
+
+              <Button
+                type="submit"
+                className="w-full"
+                disabled={loading || passwordResetSent}
+              >
+                {loading
+                  ? t("sending") || "전송 중..."
+                  : passwordResetSent
+                  ? t("password_reset_sent")
+                  : t("send_reset_email") || "재설정 링크 보내기"}
+              </Button>
+            </form>
           </div>
+        ) : (
+          <form onSubmit={handleSubmit} id="email-form" className="space-y-4">
+            <div>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                placeholder="이메일"
+                className="w-full rounded-lg bg-zinc-800 px-4 py-2 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+
+            <div>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required={!isSignUp}
+                minLength={6}
+                placeholder="비밀번호 (6자 이상)"
+                className="w-full rounded-lg bg-zinc-800 px-4 py-2 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              {!isSignUp && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsPasswordReset(true);
+                    setError(null);
+                  }}
+                  disabled={loading}
+                  className="mt-2 text-xs text-blue-500 hover:text-blue-400 transition-colors disabled:text-zinc-600"
+                >
+                  {t("forgot_password")}
+                </button>
+              )}
+            </div>
 
           {isSignUp && (
             <div>
@@ -295,12 +461,13 @@ export function LoginModal() {
             </div>
           )}
 
-          {error && (
-            <div className="rounded-lg bg-rose-500/20 px-4 py-2 text-sm text-rose-500">
-              {error}
-            </div>
-          )}
-        </form>
+            {error && (
+              <div className="rounded-lg bg-rose-500/20 px-4 py-2 text-sm text-rose-500">
+                {error}
+              </div>
+            )}
+          </form>
+        )}
 
         {/* 약관 동의 */}
         {isSignUp && (
@@ -351,47 +518,56 @@ export function LoginModal() {
         )}
 
         {/* 회원가입/로그인 버튼 (맨 아래) */}
-        <Button
-          type="submit"
-          form="email-form"
-          className="mt-6 w-full"
-          disabled={loading}
-        >
-          {loading ? "처리 중..." : isSignUp ? "회원가입" : "로그인"}
-        </Button>
+        {!isPasswordReset && (
+          <Button
+            type="submit"
+            form="email-form"
+            className="mt-6 w-full"
+            disabled={loading}
+          >
+            {loading ? "처리 중..." : isSignUp ? "회원가입" : "로그인"}
+          </Button>
+        )}
 
-        {/* OR 구분선 */}
-        <div className="my-6 flex items-center gap-4">
-          <div className="h-px flex-1 bg-zinc-700" />
-          <span className="text-sm text-zinc-500">{t("or")}</span>
-          <div className="h-px flex-1 bg-zinc-700" />
-        </div>
+        {/* TODO: 구글 로그인 구현 후 주석 해제 */}
+        {false && (
+          <>
+            {/* OR 구분선 */}
+            <div className="my-6 flex items-center gap-4">
+              <div className="h-px flex-1 bg-zinc-700" />
+              <span className="text-sm text-zinc-500">{t("or")}</span>
+              <div className="h-px flex-1 bg-zinc-700" />
+            </div>
 
-        {/* 구글 로그인 버튼 */}
-        <Button
-          variant="secondary"
-          className="w-full"
-          onClick={handleGoogleLogin}
-          disabled={loading}
-        >
-          {t("continue_with_google")}
-        </Button>
+            {/* 구글 로그인 버튼 */}
+            <Button
+              variant="secondary"
+              className="w-full"
+              onClick={handleGoogleLogin}
+              disabled={loading}
+            >
+              {t("continue_with_google")}
+            </Button>
+          </>
+        )}
 
         {/* 전환 링크 */}
-        <div className="mt-4 flex items-center justify-center text-sm">
-          <button
-            onClick={() => {
-              setIsSignUp(!isSignUp);
-              setError(null);
-              setConfirmPassword("");
-            }}
-            className="text-zinc-400 hover:text-blue-500 transition-colors"
-          >
-            {isSignUp
-              ? "이미 계정이 있으신가요? 로그인"
-              : "계정이 없으신가요? 회원가입"}
-          </button>
-        </div>
+        {!isPasswordReset && (
+          <div className="mt-4 flex items-center justify-center text-sm">
+            <button
+              onClick={() => {
+                setIsSignUp(!isSignUp);
+                setError(null);
+                setConfirmPassword("");
+              }}
+              className="text-zinc-400 hover:text-blue-500 transition-colors"
+            >
+              {isSignUp
+                ? "이미 계정이 있으신가요? 로그인"
+                : "계정이 없으신가요? 회원가입"}
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

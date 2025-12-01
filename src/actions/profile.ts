@@ -12,6 +12,7 @@ export interface UpdateProfileInput {
   display_name?: string;
   bio?: string;
   avatar_url?: string;
+  marketing_agreed?: boolean;
 }
 
 /**
@@ -43,27 +44,87 @@ export async function getProfile() {
   if (error) {
     if (error.code === "PGRST116") {
       // 프로필이 없는 경우 기본 프로필 생성
-      const { data: newProfile, error: createError } = await supabase
-        .from("user_profiles")
-        .insert({
-          id: user.id,
-          username: user.email?.split("@")[0] || "user",
-        })
-        .select()
-        .single();
+      // user_metadata에서 마케팅 동의 정보 가져오기
+      const marketingAgreed =
+        (user.user_metadata?.marketing_agreed as boolean) || false;
 
-      if (createError) {
+      // marketing_agreed 컬럼이 없을 수 있으므로, 먼저 기본 프로필 생성 시도
+      const insertData: {
+        id: string;
+        username: string;
+        marketing_agreed?: boolean;
+      } = {
+        id: user.id,
+        username: user.email?.split("@")[0] || "user",
+      };
+
+      // marketing_agreed 컬럼이 있는 경우에만 추가
+      // 마이그레이션이 적용되지 않은 경우를 대비
+      try {
+        const { data: newProfile, error: createError } = await supabase
+          .from("user_profiles")
+          .insert({
+            ...insertData,
+            marketing_agreed: marketingAgreed,
+          })
+          .select()
+          .single();
+
+        if (createError) {
+          // marketing_agreed 컬럼이 없는 경우, 컬럼 없이 재시도
+          if (createError.message?.includes("marketing_agreed")) {
+            const { data: newProfileWithoutMarketing, error: createError2 } = await supabase
+              .from("user_profiles")
+              .insert(insertData)
+              .select()
+              .single();
+
+            if (createError2) {
+              return {
+                success: false,
+                error: createError2.message || "프로필을 생성하는데 실패했습니다.",
+                data: null,
+              };
+            }
+
+            return {
+              success: true,
+              data: newProfileWithoutMarketing,
+            };
+          }
+
+          return {
+            success: false,
+            error: createError.message || "프로필을 생성하는데 실패했습니다.",
+            data: null,
+          };
+        }
+
         return {
-          success: false,
-          error: createError.message || "프로필을 생성하는데 실패했습니다.",
-          data: null,
+          success: true,
+          data: newProfile,
+        };
+      } catch (err) {
+        // 예상치 못한 오류 발생 시, marketing_agreed 없이 재시도
+        const { data: newProfileWithoutMarketing, error: createError2 } = await supabase
+          .from("user_profiles")
+          .insert(insertData)
+          .select()
+          .single();
+
+        if (createError2) {
+          return {
+            success: false,
+            error: createError2.message || "프로필을 생성하는데 실패했습니다.",
+            data: null,
+          };
+        }
+
+        return {
+          success: true,
+          data: newProfileWithoutMarketing,
         };
       }
-
-      return {
-        success: true,
-        data: newProfile,
-      };
     }
 
     return {
@@ -168,6 +229,11 @@ export async function updateProfile(input: UpdateProfileInput) {
   if (input.avatar_url !== undefined) {
     updateData.avatar_url = input.avatar_url.trim() || null;
   }
+  // marketing_agreed는 컬럼이 있을 때만 포함
+  // 마이그레이션이 적용되지 않은 경우를 대비
+  if (input.marketing_agreed !== undefined) {
+    updateData.marketing_agreed = input.marketing_agreed;
+  }
 
   // 프로필 수정
   const { data, error } = await supabase
@@ -183,6 +249,34 @@ export async function updateProfile(input: UpdateProfileInput) {
       return {
         success: false,
         error: "이미 사용 중인 사용자명입니다.",
+      };
+    }
+
+    // marketing_agreed 컬럼이 없는 경우, 컬럼 없이 재시도
+    if (error.message?.includes("marketing_agreed") && input.marketing_agreed !== undefined) {
+      const updateDataWithoutMarketing = { ...updateData };
+      delete updateDataWithoutMarketing.marketing_agreed;
+
+      const { data: updatedData, error: updateError2 } = await supabase
+        .from("user_profiles")
+        .update(updateDataWithoutMarketing)
+        .eq("id", user.id)
+        .select()
+        .single();
+
+      if (updateError2) {
+        return {
+          success: false,
+          error: updateError2.message || "프로필 수정에 실패했습니다.",
+        };
+      }
+
+      // 경로 재검증
+      revalidatePath("/profile");
+
+      return {
+        success: true,
+        data: updatedData,
       };
     }
 

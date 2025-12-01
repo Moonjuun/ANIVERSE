@@ -205,7 +205,19 @@
       "email_already_registered": "This email is already registered. Please try logging in.",
       "invalid_email": "Invalid email address.",
       "weak_password": "Password is too weak. Please use a stronger password.",
-      "signup_failed": "Sign up failed. Please try again."
+      "signup_failed": "Sign up failed. Please try again.",
+      "forgot_password": "Forgot Password",
+      "password_reset_sent": "Reset email sent",
+      "password_reset_email_sent": "We've sent a password reset email. Please check your inbox.",
+      "invalid_credentials": "Email or password is incorrect.",
+      "login_failed": "Login failed. Please try again.",
+      "reset_password_title": "Reset Password",
+      "reset_password_subtitle": "Enter your email address and we'll send you a password reset link",
+      "email_placeholder": "Email address",
+      "password_reset_instruction": "Please check your email and click the link to reset your password.",
+      "sending": "Sending...",
+      "send_reset_email": "Send Reset Link",
+      "back": "Back"
     },
     "profile_setup": {
       "title": "Almost there!",
@@ -265,6 +277,25 @@
       "deleting": "Deleting...",
       "success": "Account deletion completed",
       "error": "Account deletion failed"
+    },
+    "reset_password": {
+      "title": "Reset Password",
+      "subtitle": "Please enter your new password",
+      "password_placeholder": "New password (min 6 characters)",
+      "confirm_password_placeholder": "Confirm password",
+      "password_mismatch": "Passwords do not match",
+      "password_min_length": "Password must be at least 6 characters",
+      "password_same_as_old": "New password must be different from the old password",
+      "weak_password": "Password is too weak. Please use a stronger password.",
+      "update_failed": "Failed to reset password",
+      "update_password": "Update Password",
+      "updating": "Updating...",
+      "loading": "Loading...",
+      "success_title": "Password updated",
+      "success_message": "You can now log in with your new password.",
+      "error_title": "Error",
+      "invalid_token": "Invalid or expired link.",
+      "go_home": "Go to Home"
     }
   },
   "privacy": {

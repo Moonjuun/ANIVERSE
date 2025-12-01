@@ -205,7 +205,19 @@
       "email_already_registered": "このメールアドレスは既に登録されています。ログインをお試しください。",
       "invalid_email": "無効なメールアドレスです。",
       "weak_password": "パスワードが弱すぎます。より強力なパスワードを使用してください。",
-      "signup_failed": "登録に失敗しました。もう一度お試しください。"
+      "signup_failed": "登録に失敗しました。もう一度お試しください。",
+      "forgot_password": "パスワードを忘れた場合",
+      "password_reset_sent": "リセットメールを送信しました",
+      "password_reset_email_sent": "パスワードリセットメールを送信しました。メールボックスを確認してください。",
+      "invalid_credentials": "メールアドレスまたはパスワードが正しくありません。",
+      "login_failed": "ログインに失敗しました。もう一度お試しください。",
+      "reset_password_title": "パスワードをリセット",
+      "reset_password_subtitle": "メールアドレスを入力すると、パスワードリセットリンクをお送りします",
+      "email_placeholder": "メールアドレス",
+      "password_reset_instruction": "メールを確認し、リンクをクリックしてパスワードをリセットしてください。",
+      "sending": "送信中...",
+      "send_reset_email": "リセットリンクを送信",
+      "back": "戻る"
     },
     "profile_setup": {
       "title": "もう少しです！",
@@ -265,6 +277,25 @@
       "deleting": "削除中...",
       "success": "アカウント削除が完了しました",
       "error": "アカウント削除に失敗しました"
+    },
+    "reset_password": {
+      "title": "パスワードリセット",
+      "subtitle": "新しいパスワードを入力してください",
+      "password_placeholder": "新しいパスワード（6文字以上）",
+      "confirm_password_placeholder": "パスワード確認",
+      "password_mismatch": "パスワードが一致しません",
+      "password_min_length": "パスワードは6文字以上である必要があります",
+      "password_same_as_old": "新しいパスワードは既存のパスワードと異なる必要があります",
+      "weak_password": "パスワードが弱すぎます。より強力なパスワードを使用してください。",
+      "update_failed": "パスワードリセットに失敗しました",
+      "update_password": "パスワードを変更",
+      "updating": "変更中...",
+      "loading": "読み込み中...",
+      "success_title": "パスワードが変更されました",
+      "success_message": "新しいパスワードでログインできます。",
+      "error_title": "エラー",
+      "invalid_token": "無効なリンクまたは期限切れです。",
+      "go_home": "ホームに戻る"
     }
   },
   "privacy": {
