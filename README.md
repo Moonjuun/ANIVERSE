@@ -42,6 +42,9 @@ NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
 
+# Site URL (운영 환경 도메인)
+NEXT_PUBLIC_SITE_URL=https://aniverse.asia
+
 # TMDB API
 TMDB_ACCESS_TOKEN=your_tmdb_access_token
 ```
