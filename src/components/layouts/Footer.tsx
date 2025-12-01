@@ -13,6 +13,7 @@ export function Footer() {
   const quickLinks = [
     { href: ROUTES.ANIME.LIST(), label: t("anime") },
     { href: ROUTES.REVIEWS.LIST(), label: t("reviews") },
+    { href: ROUTES.RECOMMEND(), label: t("recommend") },
   ];
 
   return (

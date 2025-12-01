@@ -11,6 +11,7 @@ import { Menu, X, Globe } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
 import { routing } from "@/i18n/routing";
 import { SearchInput } from "@/components/features/SearchInput";
+import { ROUTES } from "@/constants/routes";
 
 export function Header() {
   const t = useTranslations("header");
@@ -45,6 +46,7 @@ export function Header() {
     { href: "/", label: t("home") },
     { href: "/anime", label: t("anime") },
     { href: "/reviews", label: t("reviews") },
+    { href: ROUTES.RECOMMEND(), label: t("recommend") },
   ];
 
   return (
