@@ -1,6 +1,6 @@
 ---
 description: AniVerse 디자인 시스템 토큰 (색상, 타이포그래피, 간격, 컴포넌트 스타일) 정의
-globs: src/app/globals.css, tailwind.config.ts, src/components/**/*.tsx
+globs: src/app/globals.css, src/components/**/*.tsx
 alwaysApply: true
 ---
 
@@ -17,11 +17,11 @@ alwaysApply: true
 
 ## 2. 컬러 팔레트 (Color Palette)
 
-Tailwind CSS의 기본 컬러 팔레트를 기반으로 아래 값을 강제한다.
+Tailwind CSS v4 설정을 기반으로 하며, `globals.css`에 정의된 CSS 변수를 활용한다.
 
 ### 🌑 Background (Surface)
 
-- **Main Background:** `bg-zinc-950` (#09090b) - 페이지 전체 배경 (완전 블랙 지양)
+- **Main Background:** `bg-zinc-950` (#09090b) - 페이지 전체 배경
 - **Card/Component:** `bg-zinc-900` (#18181b) - 벤토 그리드 카드, 모달, 사이드바
 - **Overlay:** `bg-black/60 backdrop-blur-md` - 모달 백드롭, 헤더 배경
 
@@ -44,9 +44,9 @@ Tailwind CSS의 기본 컬러 팔레트를 기반으로 아래 값을 강제한�
 
 ## 3. 타이포그래피 (Typography)
 
-- **Font Family:**
-  - 국문: `Pretendard Variable`
-  - 영문: `Inter`
+- **Font Family:** `globals.css`의 `@theme` 설정을 따른다.
+  - 국문: `var(--font-pretendard)`
+  - 영문: `var(--font-inter)`
 - **Scale:**
   - `H1`: `text-4xl md:text-5xl font-bold tracking-tight` (Hero Title)
   - `H2`: `text-2xl md:text-3xl font-semibold` (Section Title)
@@ -95,7 +95,4 @@ Tailwind CSS의 기본 컬러 팔레트를 기반으로 아래 값을 강제한�
 
 - **Transition:** 모든 인터랙션에는 `duration-200` 또는 `duration-300`을 기본으로 적용.
 - **Scrollbar:** `scrollbar-hide` 유틸리티를 사용하여 스크롤바를 숨기고 콘텐츠에 집중시킬 것.
-- **Glass Effect:** 헤더 및 플로팅 UI에는 `backdrop-blur-md`를 적극 활용할 것.---
-  alwaysApply: true
-
----
+- **Glass Effect:** 헤더 및 플로팅 UI에는 `backdrop-blur-md`를 적극 활용할 것.
