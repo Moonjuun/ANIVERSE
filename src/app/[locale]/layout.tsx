@@ -9,6 +9,7 @@ import { LogoutConfirmModal } from "@/components/auth/logout-confirm-modal";
 import { DeleteAccountConfirmModal } from "@/components/auth/delete-account-confirm-modal";
 import { DeleteReviewConfirmModal } from "@/components/features/DeleteReviewConfirmModal";
 import { Header } from "@/components/layouts/Header";
+import { Footer } from "@/components/layouts/Footer";
 import { QueryProvider } from "@/providers/QueryProvider";
 import { ToastContainer } from "@/components/ui/toast";
 import { ErrorBoundary } from "@/components/error-boundary";
@@ -47,6 +48,7 @@ export default async function LocaleLayout({
           <AuthStateHandler />
           <Header />
           {children}
+          <Footer />
           <LoginModal />
           <ProfileSetupModal />
           <OnboardingModal animeData={onboardingAnime} />

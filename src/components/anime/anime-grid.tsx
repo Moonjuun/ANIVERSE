@@ -7,9 +7,10 @@ interface AnimeGridProps {
   locale?: string;
   title?: string;
   loading?: boolean;
+  sectionId?: string; // 섹션별 고유 식별자
 }
 
-export function AnimeGrid({ animes, locale = 'ko', title, loading }: AnimeGridProps) {
+export function AnimeGrid({ animes, locale = 'ko', title, loading, sectionId }: AnimeGridProps) {
   if (loading) {
     return (
       <section className="space-y-6">
@@ -27,6 +28,14 @@ export function AnimeGrid({ animes, locale = 'ko', title, loading }: AnimeGridPr
     return null;
   }
 
+  // 고유 키 생성: sectionId가 있으면 사용, 없으면 인덱스와 조합
+  const getKey = (anime: TMDBTVShow, index: number) => {
+    if (sectionId) {
+      return `${sectionId}-${anime.id}`;
+    }
+    return `${anime.id}-${index}`;
+  };
+
   return (
     <section className="space-y-6">
       {title && (
@@ -35,8 +44,8 @@ export function AnimeGrid({ animes, locale = 'ko', title, loading }: AnimeGridPr
         </h2>
       )}
       <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-        {animes.map((anime) => (
-          <AnimeCard key={anime.id} anime={anime} locale={locale} />
+        {animes.map((anime, index) => (
+          <AnimeCard key={getKey(anime, index)} anime={anime} locale={locale} />
         ))}
       </div>
     </section>

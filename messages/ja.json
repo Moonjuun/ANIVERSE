@@ -7,7 +7,24 @@
   },
   "home": {
     "hero_title": "AniVerseへようこそ",
-    "hero_subtitle": "アニメレビューとおすすめを一箇所で"
+    "hero_subtitle": "アニメレビューとおすすめを一箇所で",
+    "hero": {
+      "votes": "件の評価",
+      "view_details": "詳細を見る"
+    },
+    "mood_pick": {
+      "title": "今日の気分は？",
+      "depressed": "落ち込んでいるとき",
+      "action": "アクション爽快感",
+      "brain": "脳を抜く",
+      "touching": "感動実話",
+      "funny": "笑いたいとき"
+    },
+    "popular": "人気アニメ",
+    "top_rated": "高評価アニメ",
+    "latest": "最新アニメ",
+    "trending": "トレンディング",
+    "this_year": "今年のアニメ"
   },
   "header": {
     "home": "ホーム",
@@ -17,6 +34,19 @@
     "login": "ログイン",
     "logout": "ログアウト",
     "language": "言語"
+  },
+  "footer": {
+    "description": "アニメレビューとおすすめを一箇所で見つけましょう",
+    "quick_links": "クイックリンク",
+    "legal": "法的通知",
+    "about": "について",
+    "about_description": "AniVerseはアニメファンのためのレビューおよびおすすめプラットフォームです。",
+    "terms": "利用規約",
+    "privacy": "プライバシーポリシー",
+    "anime": "アニメ",
+    "reviews": "レビュー",
+    "rights_reserved": "All rights reserved.",
+    "powered_by": "Powered by"
   },
   "anime": {
     "list": {

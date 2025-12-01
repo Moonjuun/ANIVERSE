@@ -7,7 +7,24 @@
   },
   "home": {
     "hero_title": "AniVerse에 오신 것을 환영합니다",
-    "hero_subtitle": "애니메이션 리뷰와 추천을 한 곳에서"
+    "hero_subtitle": "애니메이션 리뷰와 추천을 한 곳에서",
+    "hero": {
+      "votes": "명 평가",
+      "view_details": "자세히 보기"
+    },
+    "mood_pick": {
+      "title": "오늘의 기분은?",
+      "depressed": "우울할 때",
+      "action": "액션 쾌감",
+      "brain": "뇌 빼기",
+      "touching": "감동 실화",
+      "funny": "웃고 싶을 때"
+    },
+    "popular": "인기 애니메이션",
+    "top_rated": "평점 높은 애니메이션",
+    "latest": "최신 애니메이션",
+    "trending": "트렌딩",
+    "this_year": "올해의 애니메이션"
   },
   "header": {
     "home": "홈",
@@ -17,6 +34,19 @@
     "login": "로그인",
     "logout": "로그아웃",
     "language": "언어"
+  },
+  "footer": {
+    "description": "애니메이션 리뷰와 추천을 한 곳에서 만나보세요",
+    "quick_links": "빠른 링크",
+    "legal": "법적 고지",
+    "about": "소개",
+    "about_description": "AniVerse는 애니메이션 팬들을 위한 리뷰 및 추천 플랫폼입니다.",
+    "terms": "이용약관",
+    "privacy": "개인정보 처리방침",
+    "anime": "애니메이션",
+    "reviews": "리뷰",
+    "rights_reserved": "All rights reserved.",
+    "powered_by": "Powered by"
   },
   "anime": {
     "list": {

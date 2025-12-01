@@ -7,7 +7,24 @@
   },
   "home": {
     "hero_title": "Welcome to AniVerse",
-    "hero_subtitle": "Anime reviews and recommendations in one place"
+    "hero_subtitle": "Anime reviews and recommendations in one place",
+    "hero": {
+      "votes": "votes",
+      "view_details": "View Details"
+    },
+    "mood_pick": {
+      "title": "How are you feeling today?",
+      "depressed": "When feeling down",
+      "action": "Action thrill",
+      "brain": "Brain teaser",
+      "touching": "Touching story",
+      "funny": "Want to laugh"
+    },
+    "popular": "Popular Anime",
+    "top_rated": "Top Rated Anime",
+    "latest": "Latest Anime",
+    "trending": "Trending",
+    "this_year": "This Year's Anime"
   },
   "header": {
     "home": "Home",
@@ -17,6 +34,19 @@
     "login": "Login",
     "logout": "Logout",
     "language": "Language"
+  },
+  "footer": {
+    "description": "Discover anime reviews and recommendations in one place",
+    "quick_links": "Quick Links",
+    "legal": "Legal",
+    "about": "About",
+    "about_description": "AniVerse is a review and recommendation platform for anime fans.",
+    "terms": "Terms of Service",
+    "privacy": "Privacy Policy",
+    "anime": "Anime",
+    "reviews": "Reviews",
+    "rights_reserved": "All rights reserved.",
+    "powered_by": "Powered by"
   },
   "anime": {
     "list": {
