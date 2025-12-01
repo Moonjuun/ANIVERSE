@@ -6,7 +6,7 @@ import { useModalStore } from "@/stores/useModalStore";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import type { Database } from "@/types/supabase";
-import type { TMDBTVDetail } from "@/lib/tmdb/types";
+import type { TMDBTVDetail } from "@/types/tmdb";
 
 type Review = Database["public"]["Tables"]["reviews"]["Row"];
 

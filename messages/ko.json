@@ -31,6 +31,7 @@
     "anime": "애니메이션",
     "reviews": "리뷰",
     "recommend": "추천 애니",
+    "worldcup": "이상형 월드컵",
     "profile": "프로필",
     "login": "로그인",
     "logout": "로그아웃",
@@ -47,6 +48,7 @@
     "anime": "애니메이션",
     "reviews": "리뷰",
     "recommend": "추천 애니",
+    "worldcup": "이상형 월드컵",
     "rights_reserved": "All rights reserved.",
     "powered_by": "Powered by"
   },
@@ -421,5 +423,33 @@
         "date": "본 방침은 2025년 1월 1일부터 적용됩니다."
       }
     }
+  },
+  "worldcup": {
+    "welcome_title": "캐릭터 이상형 월드컵",
+    "welcome_subtitle": "당신의 이상형 캐릭터를 찾아보세요",
+    "start_button": "시작하기",
+    "theme_select_title": "캐릭터 이상형 월드컵",
+    "theme_select_subtitle": "테마를 선택해주세요",
+    "options_title": "옵션 설정",
+    "options_subtitle": "성별과 강수를 선택해주세요",
+    "gender_label": "성별",
+    "gender_all": "무관",
+    "gender_male": "남캐",
+    "gender_female": "여캐",
+    "round_label": "강수",
+    "start_game": "게임 시작",
+    "progress": "진행률",
+    "winner_title": "우승자",
+    "winner_subtitle": "축하합니다!",
+    "save_result": "결과 저장",
+    "saving": "저장 중...",
+    "saved": "저장됨",
+    "login_to_save": "로그인하고 저장하기",
+    "share": "공유하기",
+    "copied": "복사됨",
+    "play_again": "다시 하기",
+    "loading": "로딩 중...",
+    "no_winners": "아직 우승자가 없습니다. 월드컵을 플레이해보세요!",
+    "hall_of_fame": "명예의 전당"
   }
 }

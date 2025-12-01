@@ -31,6 +31,7 @@
     "anime": "アニメ",
     "reviews": "レビュー",
     "recommend": "おすすめアニメ",
+    "worldcup": "理想型ワールドカップ",
     "profile": "プロフィール",
     "login": "ログイン",
     "logout": "ログアウト",
@@ -47,6 +48,7 @@
     "anime": "アニメ",
     "reviews": "レビュー",
     "recommend": "おすすめアニメ",
+    "worldcup": "理想型ワールドカップ",
     "rights_reserved": "All rights reserved.",
     "powered_by": "Powered by"
   },
@@ -421,5 +423,33 @@
         "date": "本方針は2025年1月1日から適用されます。"
       }
     }
+  },
+  "worldcup": {
+    "welcome_title": "キャラクター理想型ワールドカップ",
+    "welcome_subtitle": "あなたの理想型キャラクターを見つけましょう",
+    "start_button": "始める",
+    "theme_select_title": "キャラクター理想型ワールドカップ",
+    "theme_select_subtitle": "テーマを選択してください",
+    "options_title": "オプション設定",
+    "options_subtitle": "性別とラウンド数を選択してください",
+    "gender_label": "性別",
+    "gender_all": "すべて",
+    "gender_male": "男キャラ",
+    "gender_female": "女キャラ",
+    "round_label": "ラウンド数",
+    "start_game": "ゲーム開始",
+    "progress": "進捗",
+    "winner_title": "優勝者",
+    "winner_subtitle": "おめでとうございます！",
+    "save_result": "結果を保存",
+    "saving": "保存中...",
+    "saved": "保存済み",
+    "login_to_save": "ログインして保存",
+    "share": "共有",
+    "copied": "コピー済み",
+    "play_again": "もう一度",
+    "loading": "読み込み中...",
+    "no_winners": "まだ優勝者がいません。ワールドカップをプレイしてみてください！",
+    "hall_of_fame": "名誉の殿堂"
   }
 }

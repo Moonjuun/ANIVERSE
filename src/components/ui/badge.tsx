@@ -2,7 +2,7 @@ import { HTMLAttributes, forwardRef } from 'react';
 import { cn } from '@/lib/utils/cn';
 
 export interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
-  variant?: 'default' | 'genre' | 'rating';
+  variant?: 'default' | 'genre' | 'rating' | 'secondary';
 }
 
 export const Badge = forwardRef<HTMLSpanElement, BadgeProps>(
@@ -13,6 +13,7 @@ export const Badge = forwardRef<HTMLSpanElement, BadgeProps>(
       default: 'bg-zinc-800 text-zinc-300 px-2.5 py-1',
       genre: 'bg-zinc-800 text-zinc-300 px-2.5 py-1',
       rating: 'bg-yellow-400/20 text-yellow-400 px-2.5 py-1',
+      secondary: 'bg-white/10 text-white px-2.5 py-1',
     };
 
     return (
@@ -26,8 +27,4 @@ export const Badge = forwardRef<HTMLSpanElement, BadgeProps>(
 );
 
 Badge.displayName = 'Badge';
-
-
-
-
 

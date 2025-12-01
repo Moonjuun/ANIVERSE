@@ -6,6 +6,7 @@ import { ReviewList } from "@/components/features/ReviewList";
 import { AnimeGrid } from "@/components/anime/anime-grid";
 import { DeleteAccountButton } from "@/components/features/DeleteAccountButton";
 import { ProfileReviewCard } from "@/components/features/ProfileReviewCard";
+import { MyWinners } from "@/components/features/MyWinners";
 import { tmdbClient } from "@/lib/tmdb/client";
 import { routing } from "@/i18n/routing";
 import { notFound, redirect } from "next/navigation";
@@ -220,6 +221,11 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
                 <p className="text-zinc-400">{t("no_favorites")}</p>
               </div>
             )}
+          </div>
+
+          {/* 명예의 전당 */}
+          <div>
+            <MyWinners />
           </div>
         </div>
       </div>

@@ -14,6 +14,7 @@ export function Footer() {
     { href: ROUTES.ANIME.LIST(), label: t("anime") },
     { href: ROUTES.REVIEWS.LIST(), label: t("reviews") },
     { href: ROUTES.RECOMMEND(), label: t("recommend") },
+    { href: ROUTES.WORLD_CUP(), label: t("worldcup") },
   ];
 
   return (
@@ -36,8 +37,8 @@ export function Footer() {
               {t("quick_links")}
             </h4>
             <ul className="space-y-3">
-              {quickLinks.map((link) => (
-                <li key={link.href}>
+              {quickLinks.map((link, index) => (
+                <li key={`${link.href}-${index}`}>
                   <Link
                     href={link.href}
                     className="text-sm text-zinc-400 transition-colors duration-200 hover:text-white"

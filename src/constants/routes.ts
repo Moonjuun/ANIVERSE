@@ -20,6 +20,7 @@ export const ROUTES = {
   FAVORITES: () => `/favorites`,
   SEARCH: () => `/search`,
   RECOMMEND: () => `/recommend`,
+  WORLD_CUP: () => `/worldcup`,
   TERMS: () => `/terms`,
   PRIVACY: () => `/privacy`,
 } as const;

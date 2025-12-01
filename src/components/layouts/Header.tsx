@@ -47,6 +47,7 @@ export function Header() {
     { href: "/anime", label: t("anime") },
     { href: "/reviews", label: t("reviews") },
     { href: ROUTES.RECOMMEND(), label: t("recommend") },
+    { href: ROUTES.WORLD_CUP(), label: t("worldcup") },
   ];
 
   return (
@@ -66,9 +67,9 @@ export function Header() {
 
         {/* Desktop Navigation */}
         <div className="hidden items-center space-x-6 md:flex">
-          {navItems.map((item) => (
+          {navItems.map((item, index) => (
             <Link
-              key={item.href}
+              key={`${item.href}-${index}`}
               href={item.href}
               className={cn(
                 "text-sm font-medium transition-colors duration-200",
@@ -161,13 +162,13 @@ export function Header() {
       {mobileMenuOpen && (
         <div className="border-t border-zinc-800 bg-zinc-950 md:hidden">
           <div className="mx-auto max-w-7xl space-y-1 px-4 py-4">
-            {navItems.map((item) => (
+            {navItems.map((item, index) => (
               <Link
-                key={item.href}
+                key={`${item.href}-${index}`}
                 href={item.href}
                 onClick={() => setMobileMenuOpen(false)}
                 className={cn(
-                  "block rounded-lg px-4 py-2 text-sm font-medium transition-colors duration-200",
+                  "flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors duration-200",
                   pathname === item.href
                     ? "bg-zinc-800 text-white"
                     : "text-zinc-400 hover:bg-zinc-800 hover:text-white"
@@ -239,4 +240,3 @@ export function Header() {
     </header>
   );
 }
-

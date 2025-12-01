@@ -31,6 +31,7 @@
     "anime": "Anime",
     "reviews": "Reviews",
     "recommend": "Recommendation",
+    "worldcup": "World Cup",
     "profile": "Profile",
     "login": "Login",
     "logout": "Logout",
@@ -47,6 +48,7 @@
     "anime": "Anime",
     "reviews": "Reviews",
     "recommend": "Recommendation",
+    "worldcup": "World Cup",
     "rights_reserved": "All rights reserved.",
     "powered_by": "Powered by"
   },
@@ -421,5 +423,33 @@
         "date": "This policy takes effect from January 1, 2025."
       }
     }
+  },
+  "worldcup": {
+    "welcome_title": "Character Ideal Type World Cup",
+    "welcome_subtitle": "Find your ideal character",
+    "start_button": "Get Started",
+    "theme_select_title": "Character World Cup",
+    "theme_select_subtitle": "Choose a theme",
+    "options_title": "Options",
+    "options_subtitle": "Select gender and rounds",
+    "gender_label": "Gender",
+    "gender_all": "All",
+    "gender_male": "Male",
+    "gender_female": "Female",
+    "round_label": "Rounds",
+    "start_game": "Start Game",
+    "progress": "Progress",
+    "winner_title": "Winner",
+    "winner_subtitle": "Congratulations!",
+    "save_result": "Save Result",
+    "saving": "Saving...",
+    "saved": "Saved",
+    "login_to_save": "Login to Save",
+    "share": "Share",
+    "copied": "Copied",
+    "play_again": "Play Again",
+    "loading": "Loading...",
+    "no_winners": "No winners yet. Play the world cup!",
+    "hall_of_fame": "Hall of Fame"
   }
 }

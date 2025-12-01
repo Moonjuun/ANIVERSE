@@ -75,6 +75,7 @@ export type Database = {
           created_at: string;
           display_name: string | null;
           id: string;
+          is_fake: boolean | null;
           marketing_agreed: boolean;
           updated_at: string;
           username: string | null;
@@ -85,6 +86,7 @@ export type Database = {
           created_at?: string;
           display_name?: string | null;
           id: string;
+          is_fake?: boolean | null;
           marketing_agreed?: boolean;
           updated_at?: string;
           username?: string | null;
@@ -95,9 +97,43 @@ export type Database = {
           created_at?: string;
           display_name?: string | null;
           id?: string;
+          is_fake?: boolean | null;
           marketing_agreed?: boolean;
           updated_at?: string;
           username?: string | null;
+        };
+        Relationships: [];
+      };
+      worldcup_winners: {
+        Row: {
+          ani_title: string;
+          character_id: number;
+          character_image: string;
+          character_name: string;
+          created_at: string;
+          id: string;
+          user_id: string;
+          worldcup_id: string;
+        };
+        Insert: {
+          ani_title: string;
+          character_id: number;
+          character_image: string;
+          character_name: string;
+          created_at?: string;
+          id?: string;
+          user_id: string;
+          worldcup_id: string;
+        };
+        Update: {
+          ani_title?: string;
+          character_id?: number;
+          character_image?: string;
+          character_name?: string;
+          created_at?: string;
+          id?: string;
+          user_id?: string;
+          worldcup_id?: string;
         };
         Relationships: [];
       };

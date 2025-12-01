@@ -66,14 +66,27 @@ class AniListClient {
     });
 
     if (!response.ok) {
+      const errorText = await response.text();
+      console.error("AniList API error:", {
+        status: response.status,
+        statusText: response.statusText,
+        errorText,
+        query,
+        variables,
+      });
       throw new Error(
-        `AniList API error: ${response.status} ${response.statusText}`
+        `AniList API error: ${response.status} ${response.statusText} - ${errorText}`
       );
     }
 
     const result = await response.json();
 
     if (result.errors) {
+      console.error("AniList GraphQL error:", {
+        errors: result.errors,
+        query,
+        variables,
+      });
       throw new Error(
         `AniList GraphQL error: ${JSON.stringify(result.errors)}`
       );
@@ -204,6 +217,160 @@ class AniListClient {
     }>(graphqlQuery, { search: query });
 
     return result.data.Page.media;
+  }
+
+  /**
+   * 월드컵 후보 캐릭터 가져오기
+   */
+  async getWorldCupCandidates(options: {
+    count: number;
+    gender?: "Male" | "Female";
+    mediaId?: number;
+  }): Promise<
+    Array<{
+      id: number;
+      name: { full: string };
+      image: { large: string };
+      media: {
+        nodes: Array<{
+          title: { userPreferred: string };
+        }>;
+      };
+    }>
+  > {
+    const { count, gender, mediaId } = options;
+
+    // mediaId가 있으면 해당 애니의 캐릭터, 없으면 전역 인기 캐릭터
+    // perPage는 최대 50개로 제한
+    const perPage = Math.min(count * 3, 50);
+    
+    let query: string;
+    const variables: Record<string, unknown> = {
+      perPage,
+    };
+
+    if (mediaId) {
+      variables.mediaId = mediaId;
+      // Media.characters도 gender 필터를 지원하지 않으므로, gender 필드를 쿼리에 포함하여 클라이언트에서 필터링
+      query = `
+        query ($mediaId: Int!, $perPage: Int!) {
+          Media(id: $mediaId, type: ANIME) {
+            characters(perPage: $perPage, sort: FAVOURITES_DESC) {
+              nodes {
+                id
+                name {
+                  full
+                }
+                image {
+                  large
+                }
+                gender
+                media {
+                  nodes {
+                    title {
+                      userPreferred
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      `;
+    } else {
+      // Page.characters는 gender 필터를 지원하지 않으므로, 모든 캐릭터를 가져온 후 클라이언트에서 필터링
+      query = `
+        query ($perPage: Int!) {
+          Page(page: 1, perPage: $perPage) {
+            characters(sort: FAVOURITES_DESC) {
+              id
+              name {
+                full
+              }
+              image {
+                large
+              }
+              gender
+              media {
+                nodes {
+                  title {
+                    userPreferred
+                  }
+                }
+              }
+            }
+          }
+        }
+      `;
+    }
+
+    const result = await this.query<{
+      data: {
+        Media?: {
+          characters: {
+            nodes: Array<{
+              id: number;
+              name: { full: string };
+              image: { large: string };
+              gender?: string | null;
+              media: {
+                nodes: Array<{
+                  title: { userPreferred: string };
+                }>;
+              };
+            }>;
+          };
+        };
+        Page?: {
+          characters: Array<{
+            id: number;
+            name: { full: string };
+            image: { large: string };
+            gender?: string | null;
+            media: {
+              nodes: Array<{
+                title: { userPreferred: string };
+              }>;
+            };
+          }>;
+        };
+      };
+    }>(query, variables);
+
+    // 결과 추출
+    let candidates: Array<{
+      id: number;
+      name: { full: string };
+      image: { large: string };
+      gender?: string | null;
+      media: {
+        nodes: Array<{
+          title: { userPreferred: string };
+        }>;
+      };
+    }> = [];
+
+    if (mediaId && result.data.Media?.characters?.nodes) {
+      candidates = result.data.Media.characters.nodes;
+    } else if (result.data.Page?.characters) {
+      candidates = result.data.Page.characters;
+    }
+
+    // gender 필터링 (클라이언트에서 필터링)
+    if (gender) {
+      candidates = candidates.filter((char) => char.gender === gender);
+    }
+
+    // 이미지가 있는 것만 필터링
+    const validCandidates = candidates.filter(
+      (char) => char.image?.large && char.media?.nodes?.length > 0
+    );
+
+    // 무작위 셔플
+    const shuffled = validCandidates.sort(() => Math.random() - 0.5);
+
+    // 요청한 개수만큼 반환
+    return shuffled.slice(0, count);
   }
 }
 
