@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Image from "next/image";
-import { getTranslations } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { tmdbClient } from "@/lib/tmdb/client";
 import { anilistClient } from "@/lib/anilist/client";
 import { Badge } from "@/components/ui/badge";
@@ -39,7 +39,8 @@ export async function generateMetadata({
     };
     const language = languageMap[locale] || "ko-KR";
 
-    try {
+    // 타임아웃 설정 (10초)
+    const metadataPromise = (async () => {
       const anime = await tmdbClient.getTVDetail(Number(id), language);
       const title = `${anime.name} | AniVerse`;
       const description =
@@ -67,7 +68,7 @@ export async function generateMetadata({
         openGraph: {
           title,
           description,
-          type: "video.tv_show",
+          type: "video.tv_show" as const,
           locale:
             locale === "ko" ? "ko_KR" : locale === "ja" ? "ja_JP" : "en_US",
           siteName: "AniVerse",
@@ -81,18 +82,34 @@ export async function generateMetadata({
           ],
         },
         twitter: {
-          card: "summary_large_image",
+          card: "summary_large_image" as const,
           title,
           description,
           images: [ogImageUrl],
         },
       };
+    })();
+
+    const timeoutPromise = new Promise<Metadata>((resolve) =>
+      setTimeout(
+        () =>
+          resolve({
+            title: "애니메이션 상세 | AniVerse",
+            description: "애니메이션 정보를 불러오는 중...",
+          }),
+        10000
+      )
+    );
+
+    try {
+      return await Promise.race([metadataPromise, timeoutPromise]);
     } catch (error) {
       // 운영 환경에서도 에러를 로깅하되, 메타데이터는 기본값 반환
       console.error(`[generateMetadata] Failed to fetch anime ${id}:`, {
         error: error instanceof Error ? error.message : String(error),
         locale,
         id,
+        hasAccessToken: !!process.env.TMDB_ACCESS_TOKEN,
       });
       return {
         title: "애니메이션 상세 | AniVerse",
@@ -133,6 +150,9 @@ export default async function AnimeDetailPage({
     notFound();
   }
 
+  // next-intl static rendering을 위한 설정
+  setRequestLocale(locale);
+
   try {
     t = await getTranslations("anime.detail");
   } catch (error) {
@@ -160,23 +180,86 @@ export default async function AnimeDetailPage({
   let anilistMediaId: number | null = null;
 
   try {
-    [anime, watchProviders, tmdbReviews] = await Promise.all([
-      tmdbClient.getTVDetail(Number(id), language),
-      tmdbClient.getTVWatchProviders(Number(id), language).catch(() => null),
-      tmdbClient.getTVReviews(Number(id), 1, language).catch(() => null),
-    ]);
+    // Promise.allSettled를 사용하여 일부 실패해도 계속 진행
+    const [animeResult, watchProvidersResult, tmdbReviewsResult] =
+      await Promise.allSettled([
+        tmdbClient.getTVDetail(Number(id), language),
+        tmdbClient.getTVWatchProviders(Number(id), language).catch(() => null),
+        tmdbClient.getTVReviews(Number(id), 1, language).catch(() => null),
+      ]);
+
+    // 애니메이션 상세 정보는 필수이므로 실패 시 에러 처리
+    if (animeResult.status === "rejected") {
+      const error = animeResult.reason;
+      console.error("[AnimeDetailPage] TMDB API Error (getTVDetail):", {
+        error: error instanceof Error ? error.message : String(error),
+        errorStack: error instanceof Error ? error.stack : undefined,
+        animeId: id,
+        locale,
+        language,
+        hasAccessToken: !!process.env.TMDB_ACCESS_TOKEN,
+      });
+      notFound();
+      return; // TypeScript를 위한 early return
+    }
+
+    anime = animeResult.value;
+
+    // watchProviders와 tmdbReviews는 선택사항이므로 실패해도 계속 진행
+    if (watchProvidersResult.status === "fulfilled") {
+      watchProviders = watchProvidersResult.value;
+    } else {
+      console.warn("[AnimeDetailPage] WatchProviders fetch failed:", {
+        error:
+          watchProvidersResult.reason instanceof Error
+            ? watchProvidersResult.reason.message
+            : String(watchProvidersResult.reason),
+        animeId: id,
+      });
+    }
+
+    if (tmdbReviewsResult.status === "fulfilled") {
+      tmdbReviews = tmdbReviewsResult.value;
+    } else {
+      console.warn("[AnimeDetailPage] TMDB Reviews fetch failed:", {
+        error:
+          tmdbReviewsResult.reason instanceof Error
+            ? tmdbReviewsResult.reason.message
+            : String(tmdbReviewsResult.reason),
+        animeId: id,
+      });
+    }
 
     // AniList 리뷰 가져오기 (비동기, 실패해도 계속 진행)
+    // 타임아웃 설정 (5초)
     try {
-      anilistMediaId = await anilistClient.findMediaByTitle(
+      const anilistSearchPromise = anilistClient.findMediaByTitle(
         anime.name,
         anime.original_name
       );
+      const timeoutPromise = new Promise<null>((resolve) =>
+        setTimeout(() => resolve(null), 5000)
+      );
+
+      anilistMediaId = await Promise.race([
+        anilistSearchPromise,
+        timeoutPromise,
+      ]);
 
       if (anilistMediaId) {
-        anilistReviews = await anilistClient
-          .getReviews(anilistMediaId, 1, 10)
-          .catch((): AniListReview[] => []);
+        const anilistReviewsPromise = anilistClient.getReviews(
+          anilistMediaId,
+          1,
+          10
+        );
+        const reviewsTimeoutPromise = new Promise<AniListReview[]>((resolve) =>
+          setTimeout(() => resolve([]), 5000)
+        );
+
+        anilistReviews = await Promise.race([
+          anilistReviewsPromise.catch((): AniListReview[] => []),
+          reviewsTimeoutPromise,
+        ]);
 
         if (process.env.NODE_ENV === "development") {
           console.log("AniList Reviews:", {
@@ -196,7 +279,8 @@ export default async function AnimeDetailPage({
       // AniList 에러는 무시하고 계속 진행
     }
   } catch (error) {
-    console.error("[AnimeDetailPage] TMDB API Error:", {
+    // 예상치 못한 에러 처리
+    console.error("[AnimeDetailPage] Unexpected Error:", {
       error: error instanceof Error ? error.message : String(error),
       errorStack: error instanceof Error ? error.stack : undefined,
       animeId: id,
@@ -205,6 +289,7 @@ export default async function AnimeDetailPage({
       hasAccessToken: !!process.env.TMDB_ACCESS_TOKEN,
     });
     notFound();
+    return; // TypeScript를 위한 early return
   }
 
   const posterUrl = tmdbClient.getPosterURL(anime.poster_path);
